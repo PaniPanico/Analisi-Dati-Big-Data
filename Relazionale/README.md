@@ -65,8 +65,8 @@ erDiagram
         text data_ordine
     }
     RIGHE_ORDINE {
-        int  codice_ordine PK-FK
-        int  codice_prodotto PK-FK
+        int  codice_ordine PK "FK -> ordini"
+        int  codice_prodotto PK "FK -> prodotti"
         int  quantita
         real prezzo_applicato
     }
