@@ -1,0 +1,11 @@
+# Configurazione locale di Claude Code / editor
+.claude/
+.vscode/
+
+# Cache di Python (rigenerata automaticamente)
+__pycache__/
+*.pyc
+
+# File di sistema
+.DS_Store
+Thumbs.db

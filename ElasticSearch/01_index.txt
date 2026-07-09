@@ -1,0 +1,36 @@
+============================================================
+ One Piece x Elasticsearch
+ ============================================================
+
+Ogni documento rappresenta un personaggio di One Piece.
+Campi:
+  - name         (text)    nome del personaggio
+  - crew         (keyword) ciurma/organizzazione/gruppo di appartenenza
+  - origin       (keyword) mare/luogo di origine
+  - bounty       (long)    taglia in berry
+  - devil_fruit  (keyword) frutto del diavolo (vuoto se il personaggio ne è sprovvisto)
+  - role         (keyword) ruolo nella ciurma
+  - status       (keyword) stato (Alive / Deceased / Unknown)
+  - description  (text)    descrizione testuale (full-text search)
+
+------------------------------------------------------------
+Comando per creare l'indice:
+------------------------------------------------------------
+
+curl -X PUT "localhost:9200/one_piece" \
+-H "Content-Type: application/json" \
+-d '
+{
+  "mappings": {
+    "properties": {
+      "name":        { "type": "text" },
+      "crew":        { "type": "keyword" },
+      "origin":      { "type": "keyword" },
+      "bounty":      { "type": "long" },
+      "devil_fruit": { "type": "keyword" },
+      "role":        { "type": "keyword" },
+      "status":      { "type": "keyword" },
+      "description": { "type": "text" }
+    }
+  }
+}'

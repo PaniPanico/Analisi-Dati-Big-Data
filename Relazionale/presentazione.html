@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negozio di Elettronica — DB Relazionale</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --bg2:#0e1530;
+    --panel:rgba(255,255,255,.045);
+    --panel-strong:rgba(255,255,255,.07);
+    --border:rgba(255,255,255,.10);
+    --border-strong:rgba(255,255,255,.18);
+    --text:#e9edf7;
+    --muted:#98a2c0;
+    --muted2:#6f7aa0;
+    --cyan:#22d3ee;
+    --violet:#a855f7;
+    --gold:#fbbf24;
+    --green:#34d399;
+    --grad:linear-gradient(120deg,#22d3ee,#a855f7);
+    --grad-soft:linear-gradient(120deg,rgba(34,211,238,.16),rgba(168,85,247,.16));
+    --shadow:0 20px 60px -25px rgba(0,0,0,.75);
+    --radius:18px;
+    --mono:'SFMono-Regular',ui-monospace,'Cascadia Code','Consolas',monospace;
+    --sans:system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:76px}
+  body{
+    margin:0;font-family:var(--sans);color:var(--text);
+    background:
+      radial-gradient(1200px 700px at 12% -8%,rgba(34,211,238,.14),transparent 55%),
+      radial-gradient(1100px 700px at 100% 0%,rgba(168,85,247,.16),transparent 50%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    background-attachment:fixed;
+    line-height:1.55;font-size:17px;-webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+
+  /* ---------- progress + nav ---------- */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:100;
+    background:var(--grad);box-shadow:0 0 12px rgba(34,211,238,.7)}
+  nav{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;align-items:center;
+    gap:6px;padding:12px 26px;backdrop-filter:blur(14px);
+    background:rgba(9,13,28,.72);border-bottom:1px solid var(--border)}
+  nav .brand{font-weight:800;letter-spacing:.3px;margin-right:auto;display:flex;align-items:center;gap:10px}
+  nav .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--grad);box-shadow:0 0 10px var(--cyan)}
+  nav a{font-size:13.5px;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:999px;
+    transition:.2s;white-space:nowrap}
+  nav a:hover{color:var(--text);background:var(--panel)}
+  nav a.active{color:var(--text);background:var(--grad-soft);border:1px solid var(--border-strong)}
+  @media(max-width:820px){nav .navlinks{display:none}}
+
+  /* ---------- layout ---------- */
+  section{max-width:1120px;margin:0 auto;padding:92px 26px 40px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--cyan);font-weight:700;margin-bottom:14px}
+  h1{font-size:clamp(34px,6vw,62px);line-height:1.05;margin:.1em 0 .3em;letter-spacing:-1px}
+  h2{font-size:clamp(26px,3.4vw,40px);margin:0 0 .5em;letter-spacing:-.5px}
+  h3{font-size:20px;margin:0 0 .4em}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  p{color:var(--muted);max-width:70ch}
+  .lead{font-size:19px;color:#c2cae4}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border-strong),transparent);margin:8px 0 0}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px;backdrop-filter:blur(6px);box-shadow:var(--shadow)}
+  .grid{display:grid;gap:18px}
+  .cols-2{grid-template-columns:repeat(2,1fr)}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:860px){.cols-2,.cols-3{grid-template-columns:1fr}}
+
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+    padding:5px 11px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--muted)}
+  .chip.on{background:var(--grad-soft);color:var(--text);border-color:var(--border-strong)}
+  .chip.wow{color:var(--gold);border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+
+  /* ---------- hero ---------- */
+  .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding-top:110px}
+  .worlds{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+  .world{flex:1;min-width:200px;border:1px solid var(--border);border-radius:14px;padding:16px 18px;background:var(--panel)}
+  .world.active{background:var(--grad-soft);border-color:var(--border-strong)}
+  .world .tag{font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px}
+  .world .name{font-weight:700;font-size:18px;margin-top:4px}
+  .world.active .name{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .meta-row{display:flex;gap:26px;flex-wrap:wrap;margin-top:30px;color:var(--muted);font-size:14.5px}
+  .meta-row b{color:var(--text);font-weight:600}
+
+  /* ---------- scenario ---------- */
+  .need{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px dashed var(--border)}
+  .need:last-child{border-bottom:0}
+  .need .ic{font-size:22px;line-height:1;filter:saturate(1.3)}
+  .need b{color:var(--text)}
+  .quote{border-left:3px solid;border-image:var(--grad) 1;padding:6px 0 6px 20px;font-size:20px;color:#d6ddf2;font-style:italic}
+
+  /* ---------- why relational ---------- */
+  .why{display:flex;gap:14px;align-items:flex-start}
+  .why .num{font-family:var(--mono);font-size:14px;color:var(--cyan);font-weight:700;margin-top:2px}
+  table.compare{width:100%;border-collapse:collapse;margin-top:4px}
+  table.compare td,table.compare th{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+  table.compare th{color:var(--muted2);font-size:12.5px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+  table.compare td:first-child{font-weight:700;white-space:nowrap}
+  .badge-yes{color:var(--green);font-weight:700}
+  .badge-no{color:var(--muted2)}
+
+  /* ---------- schema ---------- */
+  .er{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:860px){.er{grid-template-columns:1fr}}
+  .tbl{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)}
+  .tbl .head{padding:11px 15px;font-weight:700;letter-spacing:.3px;
+    background:var(--grad-soft);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+  .tbl .head .ic{font-size:16px}
+  .tbl ul{list-style:none;margin:0;padding:10px 15px;font-size:14px}
+  .tbl li{padding:3px 0;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .tbl li b{color:var(--text);font-weight:600}
+  .k{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:5px}
+  .k.pk{background:rgba(251,191,36,.16);color:var(--gold)}
+  .k.fk{background:rgba(34,211,238,.16);color:var(--cyan)}
+  .rel-legend{margin-top:18px;font-size:14.5px;color:var(--muted)}
+  .rel-legend code{font-family:var(--mono);color:var(--cyan);background:var(--panel);padding:2px 7px;border-radius:6px}
+
+  /* ---------- queries ---------- */
+  .q{scroll-margin-top:80px}
+  .q + .q{margin-top:26px}
+  .qhead{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .qnum{font-family:var(--mono);font-weight:800;font-size:15px;color:#0b1020;background:var(--grad);
+    padding:6px 12px;border-radius:10px;letter-spacing:.5px}
+  .qtitle{flex:1;min-width:200px}
+  .qtitle h3{margin:0;font-size:22px}
+  .qtitle p{margin:.35em 0 0;font-size:15px}
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 4px;
+    padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:rgba(34,211,238,.05)}
+  .controls .lbl{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+  select{font-family:var(--sans);font-size:15px;color:var(--text);background:#141b36;border:1px solid var(--border-strong);
+    border-radius:10px;padding:9px 14px;cursor:pointer;outline:none}
+  select:focus{border-color:var(--cyan)}
+  .seg{display:inline-flex;border:1px solid var(--border-strong);border-radius:10px;overflow:hidden}
+  .seg button{font-family:var(--sans);font-size:14px;color:var(--muted);background:transparent;border:0;
+    padding:9px 15px;cursor:pointer;transition:.15s;font-weight:600}
+  .seg button.on{color:#0b1020;background:var(--grad)}
+  .seg button:not(.on):hover{color:var(--text);background:var(--panel-strong)}
+
+  .qbody{display:grid;grid-template-columns:1fr 1.15fr;gap:18px;margin-top:16px}
+  @media(max-width:900px){.qbody{grid-template-columns:1fr}}
+  pre.sql{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:#c7d0ee;
+    background:#0a0f24;border:1px solid var(--border);border-radius:12px;padding:16px;overflow:auto}
+  pre.sql .kw{color:#c084fc;font-weight:600}
+  pre.sql .fn{color:#22d3ee}
+  pre.sql .st{color:#fbbf24}
+  pre.sql .cm{color:#5b678f;font-style:italic}
+  .result{border:1px solid var(--border);border-radius:12px;overflow:hidden;align-self:start}
+  .result .rhead{padding:9px 14px;font-size:12.5px;color:var(--muted2);letter-spacing:.6px;text-transform:uppercase;
+    border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .result .rhead .cnt{color:var(--cyan);font-weight:700}
+  table.data{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.data th{text-align:left;padding:10px 14px;color:var(--muted2);font-size:12px;text-transform:uppercase;
+    letter-spacing:.5px;font-weight:600;border-bottom:1px solid var(--border);position:sticky;top:0;background:#0d1430}
+  table.data td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+  table.data tr:last-child td{border-bottom:0}
+  table.data tbody tr{transition:background .15s}
+  table.data tbody tr:hover{background:var(--panel)}
+  .num{font-variant-numeric:tabular-nums;text-align:right}
+  .val-cell{position:relative}
+  .bar{position:absolute;left:0;top:0;bottom:0;background:var(--grad-soft);border-right:2px solid rgba(34,211,238,.4);z-index:0}
+  .val-cell span{position:relative;z-index:1}
+  .flash{animation:flash .5s ease}
+  @keyframes flash{0%{background:rgba(34,211,238,.22)}100%{background:transparent}}
+  .pill{font-family:var(--mono);font-size:12px;padding:2px 8px;border-radius:6px;background:var(--panel-strong);color:var(--muted)}
+
+  .wowbox{margin-top:16px;padding:14px 18px;border-radius:12px;border:1px solid rgba(251,191,36,.28);
+    background:rgba(251,191,36,.06);font-size:15px;color:#e7dcc0}
+  .wowbox b{color:var(--gold)}
+
+  /* ---------- conclusion ---------- */
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border:1px solid var(--border);
+    border-radius:12px;background:var(--panel)}
+  .step .n{flex:none;width:30px;height:30px;border-radius:9px;background:var(--grad);color:#0b1020;
+    font-weight:800;display:grid;place-items:center;font-size:15px}
+  footer{max-width:1120px;margin:0 auto;padding:30px 26px 70px;color:var(--muted2);font-size:13.5px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<nav>
+  <div class="brand"><span class="dot"></span>ElettroStore · DB</div>
+  <div class="navlinks">
+    <a href="#scenario">Scenario</a>
+    <a href="#perche">Perché relazionale</a>
+    <a href="#modello">Modello dati</a>
+    <a href="#query">Query interattive</a>
+    <a href="#fine">Conclusioni</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section id="hero" class="hero">
+  <div class="eyebrow">● Analisi Dati &amp; Big Data — Progetto d'esame</div>
+  <h1>Negozio di elettronica<br><span class="grad-text">un database che parla di business</span></h1>
+  <p class="lead">Dalla richiesta di un cliente reale a un database relazionale che risponde a domande concrete:
+  chi compra cosa, quanto vale ogni cliente, cosa si vende insieme e chi va riattivato.</p>
+
+  <div class="meta-row">
+    <div>Dominio: <b>vendita al dettaglio elettronica</b></div>
+    <div>Dati demo: <b>15 clienti · 33 prodotti · 60 ordini</b></div>
+    <div>Query: <b>3 richieste + 2 extra “WOW”</b></div>
+  </div>
+</section>
+
+<!-- ============ SCENARIO ============ -->
+<section id="scenario">
+  <div class="eyebrow">01 — Il contesto</div>
+  <h2>La richiesta del cliente</h2>
+  <p class="quote">«Gestiamo un negozio di elettronica. Oggi clienti, prodotti e ordini sono su fogli sparsi.
+  Vogliamo un sistema che tenga tutto insieme e ci dica <b>chi compra cosa</b> e <b>quanto vale ogni cliente</b>.»</p>
+  <p style="margin-top:22px">Prima di scrivere una riga di codice traduco la richiesta in bisogni informativi concreti.
+  Questi guideranno sia il modello dati sia le query.</p>
+
+  <div class="grid cols-2" style="margin-top:22px">
+    <div class="card">
+      <h3>Cosa dobbiamo memorizzare</h3>
+      <div class="need"><span class="ic">👤</span><div><b>Clienti</b> — anagrafica (nome, email, telefono, città) per riconoscerli e contattarli.</div></div>
+      <div class="need"><span class="ic">📦</span><div><b>Prodotti</b> — con prezzo e giacenza, ognuno in una <b>categoria</b> e da un <b>fornitore</b>.</div></div>
+      <div class="need"><span class="ic">🧾</span><div><b>Ordini</b> — fatti in date diverse, ciascuno con più <b>righe</b> (prodotto, quantità, prezzo applicato).</div></div>
+    </div>
+    <div class="card">
+      <h3>Cosa deve saper rispondere</h3>
+      <div class="need"><span class="ic">🔎</span><div>Quali prodotti ha comprato <b>un certo cliente</b>?</div></div>
+      <div class="need"><span class="ic">💶</span><div>Quanto ha speso <b>ciascun cliente</b> in totale?</div></div>
+      <div class="need"><span class="ic">📅</span><div>Qual è la <b>spesa media mensile</b> per cliente in un anno?</div></div>
+      <div class="need"><span class="ic">🌟</span><div><i>In più:</i> cosa si vende <b>insieme</b>? Chi è <b>inattivo</b> e va riattivato?</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY RELATIONAL ============ -->
+<section id="perche">
+  <div class="eyebrow">02 — La scelta tecnologica</div>
+  <h2>Perché un database <span class="grad-text">relazionale</span></h2>
+  <p>Il cliente non ci ha chiesto una tecnologia: ci ha dato dei dati. Guardandoli, la natura del problema
+  indica da sola la strada.</p>
+
+  <div class="grid cols-2" style="margin-top:22px">
+    <div class="card">
+      <div class="why"><span class="num">01</span><p style="margin:0"><b style="color:var(--text)">Dati strutturati e stabili.</b>
+        Ogni entità ha sempre gli stessi campi (un cliente ha nome, email, città…). Uno schema a tabelle è la forma naturale.</p></div>
+      <div class="divider" style="margin:16px 0"></div>
+      <div class="why"><span class="num">02</span><p style="margin:0"><b style="color:var(--text)">Relazioni forti e integrità.</b>
+        Un ordine <i>deve</i> appartenere a un cliente; una riga <i>deve</i> puntare a un prodotto reale.
+        Le <b>foreign key</b> impediscono dati orfani o incoerenti.</p></div>
+      <div class="divider" style="margin:16px 0"></div>
+      <div class="why"><span class="num">03</span><p style="margin:0"><b style="color:var(--text)">Prezzo “congelato”.</b>
+        Il prezzo applicato viene salvato sulla riga d'ordine: se domani il listino cambia, gli ordini passati restano corretti.</p></div>
+      <div class="divider" style="margin:16px 0"></div>
+      <div class="why"><span class="num">04</span><p style="margin:0"><b style="color:var(--text)">Domande = aggregazioni.</b>
+        “Totale per cliente”, “media mensile”, “coppie di prodotti” sono <code style="font-family:var(--mono);color:var(--cyan)">JOIN</code>
+        + <code style="font-family:var(--mono);color:var(--cyan)">GROUP BY</code>: il pane quotidiano di SQL.</p></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px">E perché non gli altri, <span style="color:var(--muted)">qui</span></h3>
+      <table class="compare">
+        <tr><th>Modello</th><th>Adatto a…</th><th>Su questa traccia</th></tr>
+        <tr><td>Relazionale</td><td>Dati tabellari, transazioni, vincoli, report</td><td class="badge-yes">✔ Scelto</td></tr>
+        <tr><td>Grafo</td><td>Reti di relazioni, percorsi, “amici di amici”</td><td class="badge-no">Sovradimensionato: poche relazioni ma profonde? No, sono tabellari</td></tr>
+        <tr><td>Documentale</td><td>Dati semi-strutturati, ricerca full-text, schema variabile</td><td class="badge-no">L'integrità ordine→cliente sarebbe a carico dell'app</td></tr>
+      </table>
+      <p style="font-size:14px;margin-top:14px;color:var(--muted2)">La stessa traccia verrà poi esplorata su Neo4j ed Elasticsearch:
+      confronteremo lo stesso dominio su modelli diversi.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODELLO ============ -->
+<section id="modello">
+  <div class="eyebrow">03 — Il modello dati</div>
+  <h2>Schema relazionale — 6 tabelle</h2>
+  <p>Normalizzato in 3ª forma normale: categorie e fornitori separati dai prodotti, e la relazione
+  molti-a-molti ordini↔prodotti risolta dalla tabella <b>righe_ordine</b>.</p>
+
+  <div class="er" style="margin-top:22px">
+    <div class="tbl">
+      <div class="head"><span class="ic">🏷️</span> categorie</div>
+      <ul>
+        <li><span class="k pk">PK</span><b>codice_categoria</b></li>
+        <li>nome</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <div class="head"><span class="ic">🏭</span> fornitori</div>
+      <ul>
+        <li><span class="k pk">PK</span><b>codice_fornitore</b></li>
+        <li>ragione_sociale</li>
+        <li>telefono · email</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <div class="head"><span class="ic">👤</span> clienti</div>
+      <ul>
+        <li><span class="k pk">PK</span><b>codice_cliente</b></li>
+        <li>nome · cognome</li>
+        <li>email · telefono · città</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <div class="head"><span class="ic">📦</span> prodotti</div>
+      <ul>
+        <li><span class="k pk">PK</span><b>codice_prodotto</b></li>
+        <li>nome · descrizione · prezzo</li>
+        <li>quantità_disponibile</li>
+        <li><span class="k fk">FK</span>codice_categoria</li>
+        <li><span class="k fk">FK</span>codice_fornitore</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <div class="head"><span class="ic">🧾</span> ordini</div>
+      <ul>
+        <li><span class="k pk">PK</span><b>codice_ordine</b></li>
+        <li>data_ordine</li>
+        <li><span class="k fk">FK</span>codice_cliente</li>
+      </ul>
+    </div>
+    <div class="tbl" style="border-color:var(--border-strong)">
+      <div class="head"><span class="ic">🔗</span> righe_ordine</div>
+      <ul>
+        <li><span class="k pk">PK</span><span class="k fk">FK</span><b>codice_ordine</b></li>
+        <li><span class="k pk">PK</span><span class="k fk">FK</span><b>codice_prodotto</b></li>
+        <li>quantità · prezzo_applicato</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rel-legend">
+    <b style="color:var(--text)">Relazioni:</b>
+    <code>categorie 1—N prodotti</code>
+    <code>fornitori 1—N prodotti</code>
+    <code>clienti 1—N ordini</code>
+    <code>ordini 1—N righe_ordine</code>
+    <code>prodotti 1—N righe_ordine</code>
+    &nbsp;→ <span style="color:var(--muted)">righe_ordine è il ponte N—N tra ordini e prodotti.</span>
+  </div>
+</section>
+
+<!-- ============ QUERY ============ -->
+<section id="query">
+  <div class="eyebrow">04 — Il cuore del progetto</div>
+  <h2>Le query, <span class="grad-text">dal vivo</span></h2>
+  <p>Ogni query qui sotto è <b>eseguita davvero</b> nel browser sugli stessi dati del database: muovi i controlli
+  e il risultato si ricalcola. A fianco trovi l'SQL identico a quello in <span class="pill">03_queries.sql</span>.</p>
+
+  <!-- Q1 -->
+  <div class="q card" id="q1">
+    <div class="qhead">
+      <span class="qnum">Q1</span>
+      <div class="qtitle">
+        <h3>Prodotti acquistati da un cliente</h3>
+        <p>Tutti i prodotti (distinti) ordinati da un cliente, con la loro categoria.</p>
+      </div>
+      <span class="chip">Richiesta dalla traccia</span>
+    </div>
+    <div class="controls">
+      <span class="lbl">Cliente</span>
+      <select id="q1-cliente"></select>
+    </div>
+    <div class="qbody">
+      <pre class="sql"><span class="cm">-- prodotti distinti comprati dal cliente scelto</span>
+<span class="kw">SELECT DISTINCT</span> p.codice_prodotto, p.nome,
+       cat.nome <span class="kw">AS</span> categoria
+<span class="kw">FROM</span> clienti c
+<span class="kw">JOIN</span> ordini o       <span class="kw">ON</span> c.codice_cliente = o.codice_cliente
+<span class="kw">JOIN</span> righe_ordine r <span class="kw">ON</span> o.codice_ordine  = r.codice_ordine
+<span class="kw">JOIN</span> prodotti p     <span class="kw">ON</span> r.codice_prodotto = p.codice_prodotto
+<span class="kw">JOIN</span> categorie cat  <span class="kw">ON</span> p.codice_categoria = cat.codice_categoria
+<span class="kw">WHERE</span> c.codice_cliente = <span class="st">?</span>
+<span class="kw">ORDER BY</span> p.nome;</pre>
+      <div class="result">
+        <div class="rhead"><span>Risultato</span><span class="cnt" id="q1-cnt"></span></div>
+        <div id="q1-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q card" id="q2">
+    <div class="qhead">
+      <span class="qnum">Q2</span>
+      <div class="qtitle">
+        <h3>Totale speso da ciascun cliente</h3>
+        <p>Somma di <span class="pill">quantità × prezzo_applicato</span> su tutti gli ordini del cliente.</p>
+      </div>
+      <span class="chip">Richiesta dalla traccia</span>
+    </div>
+    <div class="controls">
+      <span class="lbl">Ordina per totale</span>
+      <div class="seg" data-seg="q2">
+        <button data-dir="desc" class="on">↓ Decrescente</button>
+        <button data-dir="asc">↑ Crescente</button>
+      </div>
+    </div>
+    <div class="qbody">
+      <pre class="sql"><span class="kw">SELECT</span> c.codice_cliente, c.nome, c.cognome,
+       <span class="fn">ROUND</span>(<span class="fn">SUM</span>(r.quantita * r.prezzo_applicato), 2) <span class="kw">AS</span> totale_speso
+<span class="kw">FROM</span> clienti c
+<span class="kw">JOIN</span> ordini o       <span class="kw">ON</span> c.codice_cliente = o.codice_cliente
+<span class="kw">JOIN</span> righe_ordine r <span class="kw">ON</span> o.codice_ordine  = r.codice_ordine
+<span class="kw">GROUP BY</span> c.codice_cliente, c.nome, c.cognome
+<span class="kw">ORDER BY</span> totale_speso <span class="st" id="q2-dir">DESC</span>;</pre>
+      <div class="result">
+        <div class="rhead"><span>Risultato</span><span class="cnt" id="q2-cnt"></span></div>
+        <div id="q2-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q card" id="q3">
+    <div class="qhead">
+      <span class="qnum">Q3</span>
+      <div class="qtitle">
+        <h3>Spesa media mensile per cliente <span style="color:var(--muted2);font-weight:400;font-size:16px">(anno 2025)</span></h3>
+        <p>Prima il totale per ogni mese in cui il cliente ha ordinato, poi la media di quei totali.</p>
+      </div>
+      <span class="chip">Richiesta dalla traccia</span>
+    </div>
+    <div class="controls">
+      <span class="lbl">Ordina per media</span>
+      <div class="seg" data-seg="q3">
+        <button data-dir="desc" class="on">↓ Decrescente</button>
+        <button data-dir="asc">↑ Crescente</button>
+      </div>
+    </div>
+    <div class="qbody">
+      <pre class="sql"><span class="kw">SELECT</span> m.codice_cliente, cl.nome, cl.cognome,
+       <span class="fn">ROUND</span>(<span class="fn">AVG</span>(m.totale_mese), 2) <span class="kw">AS</span> spesa_media_mensile
+<span class="kw">FROM</span> (
+    <span class="kw">SELECT</span> o.codice_cliente,
+           <span class="fn">strftime</span>(<span class="st">'%Y-%m'</span>, o.data_ordine) <span class="kw">AS</span> mese,
+           <span class="fn">SUM</span>(r.quantita * r.prezzo_applicato) <span class="kw">AS</span> totale_mese
+    <span class="kw">FROM</span> ordini o
+    <span class="kw">JOIN</span> righe_ordine r <span class="kw">ON</span> o.codice_ordine = r.codice_ordine
+    <span class="kw">WHERE</span> <span class="fn">strftime</span>(<span class="st">'%Y'</span>, o.data_ordine) = <span class="st">'2025'</span>
+    <span class="kw">GROUP BY</span> o.codice_cliente, mese
+) <span class="kw">AS</span> m
+<span class="kw">JOIN</span> clienti cl <span class="kw">ON</span> cl.codice_cliente = m.codice_cliente
+<span class="kw">GROUP BY</span> m.codice_cliente, cl.nome, cl.cognome
+<span class="kw">ORDER BY</span> spesa_media_mensile <span class="st" id="q3-dir">DESC</span>;</pre>
+      <div class="result">
+        <div class="rhead"><span>Risultato</span><span class="cnt" id="q3-cnt"></span></div>
+        <div id="q3-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q card" id="q4" style="border-color:rgba(251,191,36,.3)">
+    <div class="qhead">
+      <span class="qnum">Q4</span>
+      <div class="qtitle">
+        <h3>Prodotti acquistati insieme <span style="color:var(--muted2);font-weight:400;font-size:16px">(market basket)</span></h3>
+        <p>Coppie di prodotti che compaiono nello stesso ordine, ordinate per frequenza.</p>
+      </div>
+      <span class="chip wow">🌟 Extra “WOW”</span>
+    </div>
+    <div class="controls">
+      <span class="lbl">Ordina per frequenza</span>
+      <div class="seg" data-seg="q4">
+        <button data-dir="desc" class="on">↓ Decrescente</button>
+        <button data-dir="asc">↑ Crescente</button>
+      </div>
+    </div>
+    <div class="qbody">
+      <pre class="sql"><span class="cm">-- self-join sullo stesso ordine; p1&lt;p2 evita duplicati e coppie A-A</span>
+<span class="kw">SELECT</span> p1.nome <span class="kw">AS</span> prodotto_A,
+       p2.nome <span class="kw">AS</span> prodotto_B,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> volte_insieme
+<span class="kw">FROM</span> righe_ordine r1
+<span class="kw">JOIN</span> righe_ordine r2
+  <span class="kw">ON</span> r1.codice_ordine = r2.codice_ordine
+ <span class="kw">AND</span> r1.codice_prodotto &lt; r2.codice_prodotto
+<span class="kw">JOIN</span> prodotti p1 <span class="kw">ON</span> p1.codice_prodotto = r1.codice_prodotto
+<span class="kw">JOIN</span> prodotti p2 <span class="kw">ON</span> p2.codice_prodotto = r2.codice_prodotto
+<span class="kw">GROUP BY</span> p1.nome, p2.nome
+<span class="kw">ORDER BY</span> volte_insieme <span class="st" id="q4-dir">DESC</span>, prodotto_A;</pre>
+      <div class="result">
+        <div class="rhead"><span>Risultato</span><span class="cnt" id="q4-cnt"></span></div>
+        <div id="q4-out"></div>
+      </div>
+    </div>
+    <div class="wowbox">💡 <b>Perché fa dire WOW:</b> è la base del <b>cross-selling</b>. Sapere cosa finisce nello stesso carrello
+      permette bundle (“chi compra il Galaxy compra la cover”), suggerimenti “spesso acquistati insieme” e posizionamento a scaffale.
+      Con più dati diventa un motore di raccomandazione.</div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q card" id="q5" style="border-color:rgba(251,191,36,.3)">
+    <div class="qhead">
+      <span class="qnum">Q5</span>
+      <div class="qtitle">
+        <h3>Inattività &amp; valore per cliente</h3>
+        <p>Ultimo ordine, giorni trascorsi dall'ultimo acquisto e valore totale generato.</p>
+      </div>
+      <span class="chip wow">🌟 Extra “WOW”</span>
+    </div>
+    <div class="controls">
+      <span class="lbl">Ordina per giorni inattivo</span>
+      <div class="seg" data-seg="q5">
+        <button data-dir="desc" class="on">↓ Decrescente</button>
+        <button data-dir="asc">↑ Crescente</button>
+      </div>
+    </div>
+    <div class="qbody">
+      <pre class="sql"><span class="kw">SELECT</span> c.nome || <span class="st">' '</span> || c.cognome <span class="kw">AS</span> cliente,
+       <span class="fn">MAX</span>(o.data_ordine) <span class="kw">AS</span> ultimo_ordine,
+       <span class="kw">CAST</span>(<span class="fn">julianday</span>((<span class="kw">SELECT</span> <span class="fn">MAX</span>(data_ordine) <span class="kw">FROM</span> ordini))
+            - <span class="fn">julianday</span>(<span class="fn">MAX</span>(o.data_ordine)) <span class="kw">AS INT</span>) <span class="kw">AS</span> giorni_inattivo,
+       <span class="fn">ROUND</span>(<span class="fn">SUM</span>(r.quantita * r.prezzo_applicato), 2) <span class="kw">AS</span> valore_cliente
+<span class="kw">FROM</span> clienti c
+<span class="kw">JOIN</span> ordini o       <span class="kw">ON</span> c.codice_cliente = o.codice_cliente
+<span class="kw">JOIN</span> righe_ordine r <span class="kw">ON</span> o.codice_ordine  = r.codice_ordine
+<span class="kw">GROUP BY</span> c.codice_cliente
+<span class="kw">ORDER BY</span> giorni_inattivo <span class="st" id="q5-dir">DESC</span>, valore_cliente DESC;</pre>
+      <div class="result">
+        <div class="rhead"><span>Risultato</span><span class="cnt" id="q5-cnt"></span></div>
+        <div id="q5-out"></div>
+      </div>
+    </div>
+    <div class="wowbox">💡 <b>Perché fa dire WOW:</b> unisce <b>recency</b> e <b>valore</b> in un colpo solo → è una mini
+      analisi <b>RFM</b>. In alto trovi i clienti “dormienti” ma preziosi: i candidati perfetti per una campagna di
+      <b>retention</b> mirata prima di perderli.</div>
+  </div>
+</section>
+
+<!-- ============ FINE ============ -->
+<section id="fine">
+  <div class="eyebrow">05 — In sintesi</div>
+  <h2>Conclusioni</h2>
+  <div class="grid cols-3" style="margin:22px 0">
+    <div class="card"><h3 class="grad-text">Modello solido</h3><p style="font-size:15px">6 tabelle normalizzate, vincoli e foreign key che garantiscono dati sempre coerenti.</p></div>
+    <div class="card"><h3 class="grad-text">Risposte reali</h3><p style="font-size:15px">Le 3 domande della traccia + 2 query extra che trasformano i dati in decisioni di business.</p></div>
+    <div class="card"><h3 class="grad-text">Riproducibile</h3><p style="font-size:15px">Script SQL e Python versionati: chiunque ricostruisce il DB ed esegue le query con un comando.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div>Progetto d'esame · Analisi Dati &amp; Big Data — Negozio di elettronica (DB relazionale)</div>
+  <div>File: <span class="pill">01_schema.sql</span> <span class="pill">02_insert.sql</span> <span class="pill">03_queries.sql</span> <span class="pill">query_negozio.py</span></div>
+</footer>
+
+<script>
+/* =========================================================
+   DATI — identici a 02_insert.sql (il "database" in memoria)
+   ========================================================= */
+const DB = {
+  categorie: {1:'Smartphone',2:'Notebook',3:'Accessori',4:'Tablet',5:'Audio',6:'Gaming',7:'Wearable'},
+  clienti: [
+    {id:1,nome:'Marco',cognome:'Rossi',citta:'Lecce'},
+    {id:2,nome:'Anna',cognome:'Bianchi',citta:'Roma'},
+    {id:3,nome:'Luca',cognome:'Verdi',citta:'Milano'},
+    {id:4,nome:'Sara',cognome:'Esposito',citta:'Napoli'},
+    {id:5,nome:'Paolo',cognome:'Greco',citta:'Bari'},
+    {id:6,nome:'Giulia',cognome:'Ferrari',citta:'Torino'},
+    {id:7,nome:'Francesco',cognome:'Russo',citta:'Palermo'},
+    {id:8,nome:'Chiara',cognome:'Romano',citta:'Bologna'},
+    {id:9,nome:'Matteo',cognome:'Colombo',citta:'Firenze'},
+    {id:10,nome:'Elena',cognome:'Ricci',citta:'Genova'},
+    {id:11,nome:'Davide',cognome:'Marino',citta:'Venezia'},
+    {id:12,nome:'Martina',cognome:'Conti',citta:'Verona'},
+    {id:13,nome:'Alessandro',cognome:'Gallo',citta:'Catania'},
+    {id:14,nome:'Federica',cognome:'Costa',citta:'Padova'},
+    {id:15,nome:'Simone',cognome:'De Luca',citta:'Cagliari'},
+  ],
+  prodotti: [
+    {id:1,nome:'Galaxy S23',cat:1},
+    {id:2,nome:'iPhone 14',cat:1},
+    {id:3,nome:'iPhone 15 Pro',cat:1},
+    {id:4,nome:'Galaxy A54',cat:1},
+    {id:5,nome:'Google Pixel 8',cat:1},
+    {id:6,nome:'Xiaomi 13',cat:1},
+    {id:7,nome:'ThinkPad X1',cat:2},
+    {id:8,nome:'MacBook Air M2',cat:2},
+    {id:9,nome:'MacBook Pro 14',cat:2},
+    {id:10,nome:'Dell XPS 13',cat:2},
+    {id:11,nome:'Asus ZenBook',cat:2},
+    {id:12,nome:'Mouse Wireless',cat:3},
+    {id:13,nome:'Cover Galaxy S23',cat:3},
+    {id:14,nome:'Cover iPhone 14',cat:3},
+    {id:15,nome:'Power Bank 20000',cat:3},
+    {id:16,nome:'Tastiera Meccanica',cat:3},
+    {id:17,nome:'Caricatore USB-C 65W',cat:3},
+    {id:18,nome:'Zaino Notebook 15"',cat:3},
+    {id:19,nome:'Hub USB-C 7in1',cat:3},
+    {id:20,nome:'iPad 10',cat:4},
+    {id:21,nome:'iPad Air',cat:4},
+    {id:22,nome:'Galaxy Tab S9',cat:4},
+    {id:23,nome:'Cuffie BT Pro',cat:5},
+    {id:24,nome:'AirPods Pro 2',cat:5},
+    {id:25,nome:'Speaker Bluetooth',cat:5},
+    {id:26,nome:'Soundbar 2.1',cat:5},
+    {id:27,nome:'PlayStation 5',cat:6},
+    {id:28,nome:'Controller DualSense',cat:6},
+    {id:29,nome:'Xbox Series X',cat:6},
+    {id:30,nome:'Gioco FIFA 24',cat:6},
+    {id:31,nome:'Apple Watch S9',cat:7},
+    {id:32,nome:'Galaxy Watch 6',cat:7},
+    {id:33,nome:'Fitbit Charge 6',cat:7},
+  ],
+  ordini: [
+    {id:1,cliente:1,data:'2025-04-28'},{id:2,cliente:2,data:'2025-02-20'},{id:3,cliente:3,data:'2025-11-23'},{id:4,cliente:4,data:'2025-06-13'},
+    {id:5,cliente:5,data:'2025-11-15'},{id:6,cliente:6,data:'2025-03-17'},{id:7,cliente:7,data:'2025-10-15'},{id:8,cliente:8,data:'2025-06-04'},
+    {id:9,cliente:9,data:'2025-02-28'},{id:10,cliente:10,data:'2025-09-30'},{id:11,cliente:11,data:'2025-02-25'},{id:12,cliente:12,data:'2025-04-30'},
+    {id:13,cliente:13,data:'2025-08-29'},{id:14,cliente:14,data:'2025-01-08'},{id:15,cliente:15,data:'2025-04-26'},{id:16,cliente:8,data:'2025-02-08'},
+    {id:17,cliente:1,data:'2025-01-21'},{id:18,cliente:3,data:'2025-04-06'},{id:19,cliente:3,data:'2025-08-10'},{id:20,cliente:10,data:'2025-04-02'},
+    {id:21,cliente:9,data:'2025-09-06'},{id:22,cliente:13,data:'2025-07-22'},{id:23,cliente:1,data:'2025-08-11'},{id:24,cliente:6,data:'2025-02-18'},
+    {id:25,cliente:1,data:'2025-12-10'},{id:26,cliente:3,data:'2025-02-05'},{id:27,cliente:7,data:'2025-09-16'},{id:28,cliente:1,data:'2025-03-21'},
+    {id:29,cliente:2,data:'2025-01-04'},{id:30,cliente:9,data:'2025-03-14'},{id:31,cliente:7,data:'2025-06-25'},{id:32,cliente:3,data:'2025-04-28'},
+    {id:33,cliente:8,data:'2025-04-09'},{id:34,cliente:12,data:'2025-04-01'},{id:35,cliente:1,data:'2025-06-21'},{id:36,cliente:11,data:'2025-03-19'},
+    {id:37,cliente:10,data:'2025-07-20'},{id:38,cliente:4,data:'2025-01-17'},{id:39,cliente:2,data:'2025-11-07'},{id:40,cliente:14,data:'2025-05-18'},
+    {id:41,cliente:4,data:'2025-01-10'},{id:42,cliente:1,data:'2025-08-22'},{id:43,cliente:1,data:'2025-05-17'},{id:44,cliente:12,data:'2025-03-01'},
+    {id:45,cliente:8,data:'2025-10-07'},{id:46,cliente:11,data:'2025-03-21'},{id:47,cliente:10,data:'2025-07-08'},{id:48,cliente:7,data:'2025-10-11'},
+    {id:49,cliente:14,data:'2025-09-14'},{id:50,cliente:5,data:'2025-11-09'},{id:51,cliente:8,data:'2025-05-15'},{id:52,cliente:12,data:'2025-07-02'},
+    {id:53,cliente:8,data:'2025-10-13'},{id:54,cliente:12,data:'2025-12-18'},{id:55,cliente:8,data:'2025-01-13'},{id:56,cliente:10,data:'2025-03-02'},
+    {id:57,cliente:1,data:'2025-07-09'},{id:58,cliente:3,data:'2025-04-07'},{id:59,cliente:3,data:'2025-10-20'},{id:60,cliente:1,data:'2025-02-19'}
+  ],
+  righe: [
+    {ordine:1,prodotto:2,q:1,prezzo:809.1},{ordine:1,prodotto:14,q:1,prezzo:24.9},{ordine:2,prodotto:23,q:1,prezzo:149},
+    {ordine:2,prodotto:25,q:1,prezzo:79},{ordine:3,prodotto:20,q:1,prezzo:559.55},{ordine:4,prodotto:5,q:1,prezzo:799},
+    {ordine:4,prodotto:17,q:1,prezzo:34.9},{ordine:5,prodotto:2,q:1,prezzo:899},{ordine:5,prodotto:14,q:1,prezzo:24.9},
+    {ordine:6,prodotto:11,q:1,prezzo:999},{ordine:6,prodotto:15,q:1,prezzo:35.11},{ordine:7,prodotto:20,q:1,prezzo:500.65},
+    {ordine:7,prodotto:30,q:1,prezzo:69.9},{ordine:8,prodotto:6,q:1,prezzo:699},{ordine:8,prodotto:15,q:1,prezzo:39.9},
+    {ordine:8,prodotto:23,q:1,prezzo:149},{ordine:9,prodotto:17,q:1,prezzo:34.9},{ordine:9,prodotto:22,q:1,prezzo:899},
+    {ordine:10,prodotto:1,q:1,prezzo:799},{ordine:10,prodotto:13,q:1,prezzo:16.91},{ordine:10,prodotto:17,q:1,prezzo:30.71},
+    {ordine:11,prodotto:17,q:1,prezzo:34.9},{ordine:11,prodotto:20,q:1,prezzo:500.65},{ordine:12,prodotto:20,q:1,prezzo:589},
+    {ordine:12,prodotto:24,q:1,prezzo:279},{ordine:13,prodotto:11,q:1,prezzo:999},{ordine:13,prodotto:12,q:2,prezzo:23.75},
+    {ordine:13,prodotto:18,q:1,prezzo:49.9},{ordine:14,prodotto:1,q:1,prezzo:799},{ordine:14,prodotto:13,q:1,prezzo:19.9},
+    {ordine:14,prodotto:17,q:1,prezzo:34.9},{ordine:15,prodotto:10,q:1,prezzo:1399},{ordine:15,prodotto:12,q:1,prezzo:23.75},
+    {ordine:15,prodotto:18,q:1,prezzo:44.91},{ordine:16,prodotto:4,q:1,prezzo:426.55},{ordine:16,prodotto:15,q:1,prezzo:39.9},
+    {ordine:16,prodotto:25,q:1,prezzo:79},{ordine:17,prodotto:33,q:1,prezzo:159},{ordine:18,prodotto:8,q:1,prezzo:1299},
+    {ordine:18,prodotto:12,q:1,prezzo:25},{ordine:19,prodotto:8,q:1,prezzo:1169.1},{ordine:20,prodotto:21,q:1,prezzo:779},
+    {ordine:20,prodotto:28,q:1,prezzo:69.9},{ordine:21,prodotto:1,q:1,prezzo:759.05},{ordine:21,prodotto:13,q:1,prezzo:19.9},
+    {ordine:21,prodotto:24,q:1,prezzo:279},{ordine:21,prodotto:33,q:1,prezzo:151.05},{ordine:22,prodotto:21,q:1,prezzo:779},
+    {ordine:22,prodotto:30,q:1,prezzo:62.91},{ordine:23,prodotto:28,q:1,prezzo:69.9},{ordine:23,prodotto:31,q:1,prezzo:449},
+    {ordine:24,prodotto:4,q:1,prezzo:449},{ordine:24,prodotto:13,q:1,prezzo:16.91},{ordine:25,prodotto:22,q:1,prezzo:899},
+    {ordine:25,prodotto:33,q:1,prezzo:159},{ordine:26,prodotto:5,q:1,prezzo:799},{ordine:26,prodotto:17,q:1,prezzo:31.41},
+    {ordine:27,prodotto:5,q:1,prezzo:799},{ordine:27,prodotto:23,q:1,prezzo:134.1},{ordine:28,prodotto:25,q:1,prezzo:79},
+    {ordine:28,prodotto:33,q:1,prezzo:159},{ordine:29,prodotto:2,q:1,prezzo:899},{ordine:30,prodotto:2,q:1,prezzo:899},
+    {ordine:30,prodotto:14,q:2,prezzo:23.65},{ordine:31,prodotto:20,q:1,prezzo:589},{ordine:32,prodotto:3,q:1,prezzo:1199},
+    {ordine:32,prodotto:17,q:1,prezzo:34.9},{ordine:32,prodotto:24,q:1,prezzo:279},{ordine:33,prodotto:3,q:1,prezzo:1055.12},
+    {ordine:33,prodotto:17,q:1,prezzo:34.9},{ordine:33,prodotto:24,q:1,prezzo:279},{ordine:34,prodotto:23,q:1,prezzo:134.1},
+    {ordine:35,prodotto:11,q:1,prezzo:899.1},{ordine:36,prodotto:25,q:1,prezzo:79},{ordine:36,prodotto:32,q:1,prezzo:329},
+    {ordine:37,prodotto:28,q:1,prezzo:69.9},{ordine:37,prodotto:33,q:1,prezzo:151.05},{ordine:38,prodotto:31,q:1,prezzo:449},
+    {ordine:39,prodotto:7,q:1,prezzo:1499},{ordine:39,prodotto:12,q:1,prezzo:25},{ordine:39,prodotto:16,q:1,prezzo:79},
+    {ordine:39,prodotto:19,q:1,prezzo:44.9},{ordine:40,prodotto:2,q:1,prezzo:899},{ordine:40,prodotto:14,q:1,prezzo:24.9},
+    {ordine:41,prodotto:6,q:1,prezzo:699},{ordine:42,prodotto:4,q:1,prezzo:426.55},{ordine:43,prodotto:23,q:1,prezzo:134.1},
+    {ordine:43,prodotto:33,q:1,prezzo:146.28},{ordine:44,prodotto:1,q:1,prezzo:799},{ordine:45,prodotto:24,q:1,prezzo:279},
+    {ordine:46,prodotto:23,q:1,prezzo:149},{ordine:47,prodotto:3,q:1,prezzo:1103.08},{ordine:47,prodotto:17,q:1,prezzo:34.9},
+    {ordine:47,prodotto:33,q:1,prezzo:159},{ordine:48,prodotto:32,q:1,prezzo:329},{ordine:49,prodotto:27,q:1,prezzo:549},
+    {ordine:49,prodotto:28,q:1,prezzo:64.31},{ordine:50,prodotto:25,q:1,prezzo:79},{ordine:51,prodotto:2,q:1,prezzo:827.08},
+    {ordine:51,prodotto:14,q:1,prezzo:22.91},{ordine:51,prodotto:17,q:2,prezzo:34.9},{ordine:51,prodotto:24,q:1,prezzo:279},
+    {ordine:52,prodotto:4,q:1,prezzo:449},{ordine:53,prodotto:10,q:1,prezzo:1399},{ordine:53,prodotto:18,q:1,prezzo:49.9},
+    {ordine:54,prodotto:26,q:1,prezzo:175.12},{ordine:55,prodotto:7,q:1,prezzo:1499},{ordine:55,prodotto:12,q:1,prezzo:25},
+    {ordine:55,prodotto:18,q:1,prezzo:49.9},{ordine:55,prodotto:19,q:1,prezzo:39.51},{ordine:55,prodotto:28,q:1,prezzo:61.51},
+    {ordine:56,prodotto:5,q:1,prezzo:799},{ordine:56,prodotto:17,q:1,prezzo:34.9},{ordine:57,prodotto:17,q:1,prezzo:34.9},
+    {ordine:57,prodotto:27,q:1,prezzo:521.55},{ordine:57,prodotto:28,q:1,prezzo:69.9},{ordine:58,prodotto:27,q:1,prezzo:505.08},
+    {ordine:58,prodotto:28,q:1,prezzo:69.9},{ordine:58,prodotto:30,q:1,prezzo:69.9},{ordine:59,prodotto:32,q:1,prezzo:296.1},
+    {ordine:60,prodotto:1,q:1,prezzo:799},{ordine:60,prodotto:13,q:2,prezzo:19.9}
+  ],
+};
+
+/* --------- helper --------- */
+const round2 = x => Math.round((x+Number.EPSILON)*100)/100;
+const eur = x => x.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const dateIT = s => { const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; };
+const prod = id => DB.prodotti.find(p=>p.id===id);
+const cli  = id => DB.clienti.find(c=>c.id===id);
+const ordCliente = oid => DB.ordini.find(o=>o.id===oid).cliente;
+
+/* build one row-level "fact table" like the JOINs produce */
+const facts = DB.righe.map(r=>{
+  const o = DB.ordini.find(x=>x.id===r.ordine);
+  return {...r, cliente:o.cliente, data:o.data, importo:r.q*r.prezzo};
+});
+
+/* --------- costruzione tabelle HTML --------- */
+function renderTable(cols, rows, opts={}){
+  if(!rows.length) return '<div style="padding:22px 16px;color:var(--muted2)">Nessun risultato.</div>';
+  const barCol = opts.bar; // {key, max}
+  let h='<table class="data"><thead><tr>';
+  cols.forEach(c=>h+=`<th class="${c.num?'num':''}">${c.label}</th>`);
+  h+='</tr></thead><tbody>';
+  rows.forEach(row=>{
+    h+='<tr>';
+    cols.forEach(c=>{
+      let v=row[c.key];
+      if(barCol && c.key===barCol.key){
+        const pct=Math.max(2,(row[barCol.raw]/barCol.max)*100);
+        h+=`<td class="num val-cell"><div class="bar" style="width:${pct}%"></div><span>${v}</span></td>`;
+      }else{
+        h+=`<td class="${c.num?'num':''}">${v}</td>`;
+      }
+    });
+    h+='</tr>';
+  });
+  return h+'</tbody></table>';
+}
+function setOut(id,html,cnt){
+  const el=document.getElementById(id);
+  el.innerHTML=html; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  if(cnt!==undefined) document.getElementById(id.replace('-out','-cnt')).textContent=cnt+(cnt===1?' riga':' righe');
+}
+
+/* ================= Q1 ================= */
+function runQ1(cid){
+  const seen=new Set(); const rows=[];
+  facts.filter(f=>f.cliente===cid).forEach(f=>{
+    if(seen.has(f.prodotto)) return; seen.add(f.prodotto);
+    const p=prod(f.prodotto);
+    rows.push({cod:p.id,nome:p.nome,cat:DB.categorie[p.cat]});
+  });
+  rows.sort((a,b)=>a.nome.localeCompare(b.nome));
+  setOut('q1-out', renderTable(
+    [{key:'cod',label:'Cod',num:true},{key:'nome',label:'Prodotto'},{key:'cat',label:'Categoria'}],
+    rows), rows.length);
+}
+
+/* ================= Q2 ================= */
+function runQ2(dir){
+  const map={};
+  facts.forEach(f=>{ map[f.cliente]=(map[f.cliente]||0)+f.importo; });
+  let rows=DB.clienti.map(c=>({cod:c.id,cliente:`${c.nome} ${c.cognome}`,raw:round2(map[c.id]||0)}));
+  const max=Math.max(...rows.map(r=>r.raw));
+  rows.sort((a,b)=>dir==='desc'?b.raw-a.raw:a.raw-b.raw);
+  rows.forEach(r=>r.tot=eur(r.raw));
+  setOut('q2-out', renderTable(
+    [{key:'cod',label:'Cod',num:true},{key:'cliente',label:'Cliente'},{key:'tot',label:'Totale speso',num:true}],
+    rows, {bar:{key:'tot',raw:'raw',max}}), rows.length);
+  document.getElementById('q2-dir').textContent=dir.toUpperCase();
+}
+
+/* ================= Q3 ================= */
+function runQ3(dir){
+  // per cliente -> per mese -> somma, poi media dei mesi
+  const perCli={};
+  facts.filter(f=>f.data.startsWith('2025')).forEach(f=>{
+    const mese=f.data.slice(0,7);
+    (perCli[f.cliente]=perCli[f.cliente]||{})[mese]=(perCli[f.cliente][mese]||0)+f.importo;
+  });
+  let rows=Object.keys(perCli).map(cidStr=>{
+    const cid=+cidStr; const mesi=Object.values(perCli[cid]);
+    const media=mesi.reduce((a,b)=>a+b,0)/mesi.length;
+    const c=cli(cid);
+    return {cod:cid,cliente:`${c.nome} ${c.cognome}`,mesi:mesi.length,raw:round2(media)};
+  });
+  const max=Math.max(...rows.map(r=>r.raw));
+  rows.sort((a,b)=>dir==='desc'?b.raw-a.raw:a.raw-b.raw);
+  rows.forEach(r=>r.media=eur(r.raw));
+  setOut('q3-out', renderTable(
+    [{key:'cod',label:'Cod',num:true},{key:'cliente',label:'Cliente'},
+     {key:'mesi',label:'Mesi',num:true},{key:'media',label:'Media mensile',num:true}],
+    rows, {bar:{key:'media',raw:'raw',max}}), rows.length);
+  document.getElementById('q3-dir').textContent=dir.toUpperCase();
+}
+
+/* ================= Q4 ================= */
+function runQ4(dir){
+  // per ordine, coppie prodotto1<prodotto2
+  const pairs={};
+  const byOrder={};
+  DB.righe.forEach(r=>{(byOrder[r.ordine]=byOrder[r.ordine]||[]).push(r.prodotto);});
+  Object.values(byOrder).forEach(list=>{
+    list.sort((a,b)=>a-b);
+    for(let i=0;i<list.length;i++) for(let j=i+1;j<list.length;j++){
+      const k=list[i]+'-'+list[j];
+      pairs[k]=(pairs[k]||0)+1;
+    }
+  });
+  let rows=Object.keys(pairs).map(k=>{
+    const [a,b]=k.split('-').map(Number);
+    return {a:prod(a).nome,b:prod(b).nome,raw:pairs[k]};
+  });
+  const max=Math.max(...rows.map(r=>r.raw));
+  rows.sort((x,y)=> dir==='desc' ? (y.raw-x.raw)||x.a.localeCompare(y.a)
+                                 : (x.raw-y.raw)||x.a.localeCompare(y.a));
+  rows.forEach(r=>r.cnt=r.raw+'×');
+  setOut('q4-out', renderTable(
+    [{key:'a',label:'Prodotto A'},{key:'b',label:'Prodotto B'},{key:'cnt',label:'Insieme',num:true}],
+    rows, {bar:{key:'cnt',raw:'raw',max}}), rows.length);
+  document.getElementById('q4-dir').textContent=dir.toUpperCase();
+}
+
+/* ================= Q5 ================= */
+function runQ5(dir){
+  const maxData=DB.ordini.reduce((m,o)=>o.data>m?o.data:m,'0000-00-00');
+  const maxT=new Date(maxData).getTime();
+  const per={};
+  facts.forEach(f=>{
+    const p=per[f.cliente]=per[f.cliente]||{last:'0',val:0};
+    if(f.data>p.last)p.last=f.data; p.val+=f.importo;
+  });
+  let rows=Object.keys(per).map(cidStr=>{
+    const cid=+cidStr,c=cli(cid),p=per[cid];
+    const giorni=Math.trunc((maxT-new Date(p.last).getTime())/86400000);
+    return {cliente:`${c.nome} ${c.cognome}`,ultimo:dateIT(p.last),giorniRaw:giorni,
+            giorni:giorni,raw:round2(p.val)};
+  });
+  const max=Math.max(...rows.map(r=>r.raw));
+  rows.sort((a,b)=> dir==='desc' ? (b.giorniRaw-a.giorniRaw)||(b.raw-a.raw)
+                                 : (a.giorniRaw-b.giorniRaw)||(b.raw-a.raw));
+  rows.forEach(r=>r.valore=eur(r.raw));
+  setOut('q5-out', renderTable(
+    [{key:'cliente',label:'Cliente'},{key:'ultimo',label:'Ultimo ordine'},
+     {key:'giorni',label:'Giorni inattivo',num:true},{key:'valore',label:'Valore cliente',num:true}],
+    rows, {bar:{key:'valore',raw:'raw',max}}), rows.length);
+  document.getElementById('q5-dir').textContent=dir.toUpperCase();
+}
+
+/* ================= wiring ================= */
+// Q1 dropdown
+const sel=document.getElementById('q1-cliente');
+DB.clienti.forEach(c=>{
+  const o=document.createElement('option');
+  o.value=c.id; o.textContent=`${c.id} — ${c.nome} ${c.cognome} (${c.citta})`;
+  sel.appendChild(o);
+});
+sel.addEventListener('change',e=>runQ1(+e.target.value));
+
+// segmented toggles Q2..Q5
+const runners={q2:runQ2,q3:runQ3,q4:runQ4,q5:runQ5};
+document.querySelectorAll('.seg').forEach(seg=>{
+  const key=seg.dataset.seg;
+  seg.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      runners[key](btn.dataset.dir);
+    });
+  });
+});
+
+// init
+runQ1(1); runQ2('desc'); runQ3('desc'); runQ4('desc'); runQ5('desc');
+
+/* ---------- progress bar + nav attiva ---------- */
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+});
+const links=[...document.querySelectorAll('nav .navlinks a')];
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){
+    links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));
+  }});
+},{rootMargin:'-45% 0px -50% 0px'});
+['scenario','perche','modello','query','fine'].forEach(id=>{
+  const el=document.getElementById(id); if(el)obs.observe(el);
+});
+</script>
+</body>
+</html>

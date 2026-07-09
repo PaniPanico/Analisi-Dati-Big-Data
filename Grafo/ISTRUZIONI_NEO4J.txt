@@ -1,0 +1,90 @@
+============================================================
+ ISTRUZIONI - DB A GRAFO (Neo4j Desktop)
+ Piattaforma musicale
+============================================================
+
+Questo file spiega passo passo come installare il database a
+grafo, caricare i dati ed eseguire le query. Segui i passi
+nell'ordine indicato.
+
+
+------------------------------------------------------------
+1) INSTALLARE NEO4J DESKTOP
+------------------------------------------------------------
+1. Vai su https://neo4j.com/download/ e scarica "Neo4j Desktop".
+2. Installa e avvia l'applicazione.
+   (Alla prima apertura ti verra' chiesta una "Activation Key"
+    gratuita: segui le indicazioni a schermo per ottenerla.)
+
+
+------------------------------------------------------------
+2) CREARE IL DATABASE
+------------------------------------------------------------
+1. Nella schermata principale clicca su "New" -> "Create project".
+   Dai un nome al progetto, es. "Piattaforma Musicale".
+2. Dentro al progetto clicca "Add" -> "Local DBMS".
+3. Inserisci:
+     - Name:     musica
+     - Password: 12345678
+       (e' la password attesa dallo script Python query_musica.py,
+        variabile AUTH. Puoi sceglierne una diversa, ma allora
+        dovrai aggiornarla anche nello script)
+     - Version:  lascia quella proposta (5.x)
+4. Clicca "Create".
+5. Avvia il database con il pulsante "Start".
+   Attendi che lo stato diventi "Active".
+
+
+------------------------------------------------------------
+3) CARICARE I DATI (script Cypher)
+------------------------------------------------------------
+Metodo A - tramite Neo4j Browser (consigliato):
+1. Con il DBMS avviato, clicca "Open" -> "Neo4j Browser".
+2. Apri il file 01_create.cypher con un editor di testo.
+3. Copia TUTTO il contenuto e incollalo nella barra dei
+   comandi in alto nel Browser (quella con il prompt "neo4j$").
+4. Premi il pulsante "play" (o Ctrl+Invio) per eseguire.
+   NB: lo script inizia con "MATCH (n) DETACH DELETE n;" che
+   svuota il database: e' corretto, serve a ripartire pulito.
+5. Verifica con il comando:
+        MATCH (n) RETURN count(n);
+   Devono comparire i nodi creati (artisti, album, brani, ecc.).
+
+Metodo B - tramite Python:
+   In alternativa puoi popolare il grafo lanciando:
+        python query_musica.py --crea
+   (richiede 'pip install neo4j' e il DBMS avviato).
+
+
+------------------------------------------------------------
+4) ESEGUIRE LE QUERY DA PYTHON
+------------------------------------------------------------
+1. Installa il driver Python di Neo4j:
+        pip install neo4j
+2. Apri query_musica.py e controlla in alto:
+        URI  = "neo4j://127.0.0.1:7687"
+        AUTH = ("neo4j", "12345678")
+   Se hai scelto una password diversa in fase di creazione del
+   DBMS, mettila qui al posto di "12345678".
+3. Lancia:
+        python query_musica.py
+   Verranno eseguite e stampate le 3 query richieste.
+
+
+------------------------------------------------------------
+5) ESEGUIRE LE QUERY DIRETTAMENTE NEL BROWSER (opzionale)
+------------------------------------------------------------
+Puoi anche aprire il file 02_queries.cypher e incollare una
+query alla volta nel Neo4j Browser per vederne il risultato in
+forma grafica/tabellare.
+
+
+------------------------------------------------------------
+NOTE PER LA PRESENTAZIONE / IMMAGINI DELLO SCHEMA
+------------------------------------------------------------
+Nel README.md di questa cartella e' gia' presente un diagramma
+schematico del modello dati (nodi e relazioni).
+Se vuoi anche uno screenshot del grafo reale:
+- esegui nel Browser:  MATCH (n)-[r]->(m) RETURN n,r,m LIMIT 100
+- usa il pulsante di esportazione immagine del Browser
+  (icona download sul pannello del grafo) per salvare un PNG.

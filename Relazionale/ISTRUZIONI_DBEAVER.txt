@@ -1,0 +1,126 @@
+============================================================
+ ISTRUZIONI - DB RELAZIONALE su DBeaver (SQLite)
+ Negozio di elettronica
+============================================================
+
+IMPORTANTE: usa una connessione di tipo SQLite. Il database usa
+funzioni specifiche di SQLite (strftime, PRAGMA foreign_keys),
+quindi NON funziona con connessioni MySQL/PostgreSQL.
+
+I file di riferimento sono in questa cartella 'Relazionale':
+  01_schema.sql   -> crea le tabelle
+  02_insert.sql   -> inserisce i dati di esempio
+  03_queries.sql  -> le query della traccia (+ query aggiuntive)
+  negozio.db      -> database gia' creato e popolato
+  query_negozio.py-> stesse query da Python
+  presentazione.html -> presentazione del progetto (apribile nel browser)
+
+
+############################################################
+ STRADA A - Costruire il database da zero (CONSIGLIATA)
+############################################################
+ Mostra all'esame l'intero processo: creazione, popolamento,
+ interrogazione.
+
+1) Apri DBeaver.
+
+2) Crea una nuova connessione SQLite:
+   - menu  Database > New Database Connection
+   - seleziona  SQLite  > Next
+   - alla prima connessione SQLite, DBeaver chiede di scaricare
+     il driver: clicca "Download" e attendi.
+
+3) Indica il file del database:
+   - nel campo "Path" clicca "Open ..." / "Create"
+   - scegli una cartella e dai un nome al file, es.
+        negozio_dbeaver.db
+     (se il file non esiste, DBeaver lo crea)
+   - clicca "Finish".
+
+4) Apri un editor SQL sulla connessione appena creata:
+   - seleziona la connessione nel pannello a sinistra
+   - menu  SQL Editor > New SQL Script
+
+5) Esegui lo SCHEMA:
+   - apri il file 01_schema.sql (File > Open File) oppure
+     incolla il suo contenuto nell'editor
+   - esegui TUTTO lo script con  "Execute SQL Script"
+     (icona con piu' righe, oppure  Alt+X )
+
+6) Esegui gli INSERT:
+   - apri/incolla 02_insert.sql
+   - esegui con  Alt+X  (Execute SQL Script)
+
+7) Aggiorna l'albero a sinistra (tasto F5 sulla connessione):
+   sotto  Tables  devono comparire le 6 tabelle
+   (categorie, clienti, fornitori, ordini, prodotti, righe_ordine).
+   Doppio clic su una tabella > scheda "Data" per vedere i dati.
+
+8) Esegui le QUERY:
+   - apri/incolla 03_queries.sql
+   - per vedere i risultati UNO PER UNO: metti il cursore dentro
+     una query e premi  Ctrl+Invio  (Execute SQL Statement)
+   - in alternativa  Alt+X  esegue tutte le query e apre piu'
+     schede di risultato.
+
+
+############################################################
+ STRADA B - Aprire direttamente il database gia' pronto
+############################################################
+ Piu' rapido: usa il file negozio.db gia' creato e popolato.
+
+1) Apri DBeaver.
+
+2) Database > New Database Connection > SQLite > Next.
+
+3) Nel campo "Path" clicca "Open ..." e seleziona il file
+   gia' esistente in questa cartella:
+      negozio.db
+   poi "Finish" (scarica il driver se richiesto).
+
+4) Espandi la connessione > Tables: le 6 tabelle con i dati
+   sono gia' presenti.
+
+5) SQL Editor > New SQL Script, apri/incolla 03_queries.sql
+   ed esegui le query con  Ctrl+Invio  (una per volta) o
+   Alt+X  (tutte).
+
+
+############################################################
+ STRADA C - Eseguire le query da Python
+############################################################
+ Non richiede DBeaver ne' librerie esterne: il modulo sqlite3
+ e' incluso in Python 3.
+
+1) Assicurati di avere Python 3 installato:
+        python --version
+
+2) Da un terminale aperto in questa cartella 'Relazionale', lancia:
+        python query_negozio.py
+   Lo script usa il file negozio.db se presente; se manca (o se
+   passi l'opzione --crea) lo ricostruisce da 01_schema.sql e
+   02_insert.sql:
+        python query_negozio.py --crea
+
+3) Le query vengono eseguite e stampate a video una dopo l'altra.
+
+
+############################################################
+ NOTE UTILI
+############################################################
+- Esecuzione: Ctrl+Invio = esegue la singola istruzione dove
+  si trova il cursore; Alt+X = esegue l'intero script.
+- Chiavi esterne: per attivare il controllo delle foreign key
+  in SQLite, lo script 01_schema.sql contiene gia'
+  "PRAGMA foreign_keys = ON;".
+- Le query della traccia usano come esempio il cliente con
+  codice 1 (Marco Rossi) e l'anno 2025: puoi cambiare questi
+  valori direttamente nel testo SQL.
+- Oltre alle 3 query richieste dalla traccia, il progetto include
+  alcune query aggiuntive (es. prodotti acquistati insieme,
+  inattivita' e valore per cliente): vedi 03_queries.sql e
+  query_negozio.py.
+- Risultati attesi (con i dati di esempio):
+    Query 1 -> prodotti acquistati dal cliente 1
+    Query 2 -> totale speso per ciascun cliente (in ordine decrescente)
+    Query 3 -> spesa media mensile 2025 per cliente

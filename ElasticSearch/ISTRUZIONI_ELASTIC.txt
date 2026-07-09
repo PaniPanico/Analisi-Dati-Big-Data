@@ -1,0 +1,88 @@
+============================================================
+ ISTRUZIONI - DB NoSQL DOCUMENTALE (Elasticsearch)
+ Tema: One Piece
+============================================================
+
+Questo file spiega passo passo come avviare Elasticsearch,
+creare l'indice, caricare i dati ed eseguire le query.
+
+
+------------------------------------------------------------
+1) PREREQUISITO: DOCKER
+------------------------------------------------------------
+Serve Docker Desktop installato e avviato.
+Download: https://www.docker.com/products/docker-desktop/
+
+
+------------------------------------------------------------
+2) AVVIARE ELASTICSEARCH (e KIBANA)
+------------------------------------------------------------
+1. Apri un terminale nella cartella 'elasticsearch' (quella che
+   contiene docker-compose.yaml).
+2. Lancia:
+        docker compose up -d
+3. Attendi ~1 minuto. Verifica che ES risponda aprendo nel
+   browser:  http://localhost:9200
+   Deve comparire un JSON con "tagline": "You Know, for Search".
+4. (Opzionale) Kibana sara' disponibile su http://localhost:5601
+
+
+------------------------------------------------------------
+3) CREARE L'INDICE E CARICARE I DATI
+------------------------------------------------------------
+Hai due possibilita'.
+
+  --- METODO A: con Python (consigliato) ---
+  1. pip install elasticsearch
+  2. python query_onepiece.py --carica
+     (crea l'indice 'one_piece' e carica tutti i documenti
+      presenti in bulk.ndjson, circa 1500 personaggi)
+
+  --- METODO B: con curl ---
+  1. Crea l'indice (comando in 01_index.txt):
+        curl -X PUT "localhost:9200/one_piece" \
+          -H "Content-Type: application/json" -d @- < ...
+     (puoi copiare il blocco JSON dal file 01_index.txt)
+  2. Carica i dati con la Bulk API:
+        curl -X POST "localhost:9200/_bulk" \
+          -H "Content-Type: application/x-ndjson" \
+          --data-binary @bulk.ndjson
+     IMPORTANTE: il file bulk.ndjson deve terminare con una riga
+     vuota finale (gia' presente).
+
+
+------------------------------------------------------------
+4) ESEGUIRE LE QUERY
+------------------------------------------------------------
+  --- Da Python ---
+        python query_onepiece.py
+     (esegue full-text search, filtri, range e aggregazioni)
+
+  --- Da un browser (presentazione interattiva) ---
+     Apri il file presentazione_elasticsearch.html: interroga
+     Elasticsearch dal vivo (richiede ES avviato con il CORS
+     abilitato, come nel docker-compose.yaml fornito).
+
+  --- Da Kibana Dev Tools ---
+     Apri http://localhost:5601 -> menu laterale -> "Dev Tools".
+     Le query di esempio (full-text multi_match, filtri term,
+     range, aggregazioni) sono documentate e commentate dentro
+     query_onepiece.py: puoi riscriverle in Dev Tools partendo
+     da li'.
+
+
+------------------------------------------------------------
+5) FERMARE I CONTAINER
+------------------------------------------------------------
+        docker compose down
+   (per cancellare anche i dati salvati:  docker compose down -v )
+
+
+------------------------------------------------------------
+NOTA SUL MODELLO DEI DATI
+------------------------------------------------------------
+Elasticsearch e' un database NoSQL documentale: ogni personaggio
+e' un documento JSON autonomo (nessuna tabella, nessun join).
+La forza di questo modello e' la ricerca full-text sul campo
+'description' e le aggregazioni (es. taglia media per ciurma),
+mostrate negli esempi.
