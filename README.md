@@ -7,9 +7,9 @@ progettato, implementato, popolato con dati di esempio e interrogato tramite uno
 
 | # | Tipologia | Tecnologia | Tema / Traccia |
 |---|-----------|------------|----------------|
-| 1 | **Relazionale** | SQLite | Negozio di elettronica (clienti, prodotti, ordini) |
-| 2 | **NoSQL a Grafo** | Neo4j | Piattaforma di streaming musicale (knowledge graph) |
-| 3 | **NoSQL Documentale** | Elasticsearch | Personaggi di *One Piece* (traccia libera) |
+| 1 | **Relazionale** | SQLite | Negozio di elettronica |
+| 2 | **NoSQL a Grafo** | Neo4j | Piattaforma di streaming musicale |
+| 3 | **NoSQL Documentale** | Elasticsearch | Personaggi di *One Piece* |
 
 Ogni progetto dimostra la capacità di **progettare** un database, **interrogarlo**
 con query mirate e **interagire con esso da Python**.
@@ -24,24 +24,26 @@ Analisi_Dati_Big_Data/
 ├── Relazionale/                  ← DB relazionale (SQLite)
 │   ├── 01_schema.sql             creazione tabelle
 │   ├── 02_insert.sql             dati di esempio
-│   ├── 03_queries.sql            query della traccia (+ aggiuntive)
+│   ├── 03_queries.sql            query della traccia (+ extra)
 │   ├── negozio.db                database già creato e popolato
 │   ├── query_negozio.py          esecuzione query da Python
 │   ├── presentazione.html        presentazione del progetto
+│   ├── README.md                 dettaglio del modello di database
 │   └── ISTRUZIONI_DBEAVER.txt    guida passo-passo
 ├── Grafo/                        ← DB a grafo (Neo4j)
 │   ├── 01_create.cypher          creazione nodi + relazioni
 │   ├── 02_queries.cypher         query Cypher
 │   ├── query_musica.py           esecuzione query da Python
-│   ├── presentazione.html        presentazione (query dal vivo)
-│   ├── README.md                 dettaglio del modello dati
+│   ├── presentazione.html        presentazione del progetto
+│   ├── README.md                 dettaglio del modello di database
 │   └── ISTRUZIONI_NEO4J.txt      guida passo-passo
 └── ElasticSearch/                ← DB documentale (Elasticsearch)
     ├── docker-compose.yaml       avvio Elasticsearch + Kibana
     ├── 01_index.txt              mapping dell'indice
-    ├── bulk.ndjson               dataset (~1500 personaggi)
+    ├── bulk.ndjson               dataset (circa 1500 personaggi)
     ├── query_onepiece.py         creazione indice + query da Python
-    ├── presentazione_elasticsearch.html   presentazione (query dal vivo)
+    ├── presentazione_elasticsearch.html   presentazione del progetto
+    ├── README.md                 dettaglio del modello di database
     └── ISTRUZIONI_ELASTIC.txt    guida passo-passo
 ```
 
@@ -53,17 +55,17 @@ Analisi_Dati_Big_Data/
   - Il progetto relazionale usa solo la libreria standard (`sqlite3`).
   - Grafo: `pip install neo4j`
   - Elasticsearch: `pip install elasticsearch`
-- **DBeaver** (opzionale) per esplorare il DB relazionale in modo visuale.
+- **DBeaver** (opzionale) per esplorare visivamente il DB relazionale.
 - **Neo4j Desktop** per il database a grafo.
-- **Docker Desktop** per Elasticsearch (e Kibana).
+- **Docker Desktop** per Elasticsearch e Kibana.
 
-Ogni cartella contiene un file `ISTRUZIONI_*.txt` con la procedura completa e
-autonoma per replicare la pipeline (installazione → creazione → popolamento →
+Ogni cartella contiene un file `ISTRUZIONI_*.txt` con la procedura completa
+per replicare la pipeline (installazione → creazione → popolamento →
 query).
 
 ---
 
-## 1. Database Relazionale — Negozio di elettronica (SQLite)
+## 1. Database Relazionale — ElettroStore (SQLite)
 
 **Traccia:** informatizzare la gestione di clienti, prodotti e ordini di un
 negozio di elettronica, consentendo di conoscere i prodotti acquistati dai
@@ -119,7 +121,7 @@ erDiagram
     }
 ```
 
-### Query principali (traccia)
+### Query 
 
 1. Elencare tutti i prodotti acquistati da un determinato cliente.
 2. Calcolare il totale speso da ciascun cliente.
@@ -128,7 +130,7 @@ erDiagram
 Sono incluse anche query aggiuntive (coppie di prodotti acquistati insieme,
 inattività e valore per cliente).
 
-### Come eseguire (in breve)
+### Come eseguire
 
 ```bash
 cd Relazionale
@@ -136,7 +138,7 @@ python query_negozio.py          # usa negozio.db; le query vengono stampate
 python query_negozio.py --crea   # ricostruisce il DB da 01_schema.sql + 02_insert.sql
 ```
 
-Guida completa (anche con DBeaver): [`Relazionale/ISTRUZIONI_DBEAVER.txt`](Relazionale/ISTRUZIONI_DBEAVER.txt).
+Guida completa: [`Relazionale/ISTRUZIONI_DBEAVER.txt`](Relazionale/ISTRUZIONI_DBEAVER.txt).
 
 ---
 
@@ -161,19 +163,22 @@ graph LR
 ```
 
 Sei tipi di nodo (`Artist`, `Album`, `Track`, `Genre`, `User`, `Playlist`) e otto
-relazioni; **`LISTENED`** e **`SIMILAR_TO`** portano proprietà sugli archi.
+relazioni; **`LISTENED`** e **`SIMILAR_TO`** portano proprietà sugli archi in particolare:
+
+- **`LISTENED {conteggio, timestamp}`**
+- **`SIMILAR_TO {stile, atmosfera, strumenti}`**
+
 Dettaglio completo del modello: [`Grafo/README.md`](Grafo/README.md).
 
-### Query principali (traccia)
+### Query
 
 1. Brani consigliati in base agli artisti seguiti e ai generi più ascoltati.
 2. Artisti collegati indirettamente perché ascoltati dagli stessi utenti.
 3. Artisti a 2 hop di distanza (`Utente → Artista ← Utente → Artista`).
 
-In più: filtering collaborativo, gradi di separazione (`shortestPath`), brani
-simili via `SIMILAR_TO` e ascolti recenti via `timestamp`.
+In più: filtering collaborativo, gradi di separazione (`shortestPath`).
 
-### Come eseguire (in breve)
+### Come eseguire
 
 ```bash
 cd Grafo
@@ -189,9 +194,8 @@ Richiede un DBMS Neo4j avviato con password `12345678` (o aggiornare `AUTH` in
 
 ## 3. Database Documentale — One Piece (Elasticsearch)
 
-**Traccia libera.** Ogni personaggio di *One Piece* è un documento JSON autonomo
-(nessuna tabella, nessun join). Il modello mette in risalto la **ricerca
-full-text** sul campo `description` e le **aggregazioni** (es. taglia media per
+**Traccia libera.** Ogni personaggio di *One Piece* è un documento JSON autonomo. Il modello mette in risalto la 
+**ricerca full-text** e le **aggregazioni** (es. taglia media per
 ciurma).
 
 ### Struttura del documento
@@ -205,18 +209,18 @@ ciurma).
 | `devil_fruit` | `keyword` | frutto del diavolo (se presente) |
 | `role` | `keyword` | ruolo nella ciurma |
 | `status` | `keyword` | Alive / Deceased / Unknown |
-| `description` | `text` | descrizione testuale (full-text search) |
+| `description` | `text` | descrizione testuale |
 
 Dataset: **~1500 documenti** in `bulk.ndjson`.
 
-### Query di esempio
+### Query
 
 - Full-text `multi_match` con `fuzziness` e `highlight`.
-- Filtro `term` (membri di una ciurma).
-- `range` (taglia superiore a 1 miliardo).
-- Aggregazione `terms` + `avg` (taglia media per ciurma).
+- Filtro `term` per mostrare i membri di una determinata ciurma.
+- `range` per filtrare i personaggi con taglia superiore a 1 miliardo.
+- Aggregazione `terms` + `avg` per calcolare la  taglia media per ciurma.
 
-### Come eseguire (in breve)
+### Come eseguire
 
 ```bash
 cd ElasticSearch
@@ -233,6 +237,6 @@ Elasticsearch risponde su `http://localhost:9200`, Kibana su
 
 ## Presentazioni
 
-Ogni cartella contiene una presentazione HTML apribile nel browser. Le
+Ogni cartella contiene una presentazione HTML consultabile nel browser. Le
 presentazioni di Grafo ed Elasticsearch eseguono le query **dal vivo** sul
-database (richiedono quindi il rispettivo servizio avviato).
+database e pertanto richiedono il rispettivo servizio avviato.
