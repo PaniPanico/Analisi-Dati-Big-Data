@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+/index.html
+immagini/
+
 # File di sistema
 .DS_Store
 Thumbs.db
