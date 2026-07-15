@@ -1,13 +1,6 @@
--- ============================================================
---  DB RELAZIONALE - Negozio di elettronica
---  Query richieste dalla traccia
--- ============================================================
-
--- ------------------------------------------------------------
 -- QUERY 1
--- Elencare tutti i prodotti acquistati da un determinato
--- cliente (esempio: cliente 'Marco Rossi', codice_cliente = 1).
--- ------------------------------------------------------------
+-- Elencare tutti i prodotti acquistati da un determinato cliente (esempio: cliente 'Marco Rossi', codice_cliente = 1).
+
 SELECT DISTINCT p.codice_prodotto,
        p.nome,
        cat.nome AS categoria
@@ -19,12 +12,10 @@ JOIN categorie cat   ON p.codice_categoria = cat.codice_categoria
 WHERE c.codice_cliente = 1
 ORDER BY p.nome;
 
-
--- ------------------------------------------------------------
 -- QUERY 2
 -- Calcolare il totale speso da ciascun cliente.
 --   totale riga = quantita * prezzo_applicato
--- ------------------------------------------------------------
+
 SELECT c.codice_cliente,
        c.nome,
        c.cognome,
@@ -35,16 +26,12 @@ JOIN righe_ordine r ON o.codice_ordine  = r.codice_ordine
 GROUP BY c.codice_cliente, c.nome, c.cognome
 ORDER BY totale_speso DESC;
 
-
--- ------------------------------------------------------------
 -- QUERY 3
--- Calcolare la spesa media mensile di ogni cliente per un
--- anno di riferimento (2025).
+-- Calcolare la spesa media mensile di ogni cliente per un anno di riferimento (2025).
 --
--- Passo 1 (sottoquery): per ogni cliente e per ogni mese in
---   cui ha effettuato ordini si calcola la spesa totale.
+-- Passo 1 (sottoquery): per ogni cliente e per ogni mese in cui ha effettuato ordini si calcola la spesa totale.
 -- Passo 2: si fa la media di tali totali mensili.
--- ------------------------------------------------------------
+
 SELECT m.codice_cliente,
        cl.nome,
        cl.cognome,
@@ -63,16 +50,9 @@ GROUP BY m.codice_cliente, cl.nome, cl.cognome
 ORDER BY spesa_media_mensile DESC;
 
 
--- ------------------------------------------------------------
 -- QUERY 4
--- Individuare le coppie di prodotti acquistati piu' spesso
--- insieme (nello stesso ordine): market basket analysis.
---
--- Il self-join di righe_ordine sullo stesso codice_ordine
--- accoppia i prodotti; la condizione codice_prodotto < ...
--- evita coppie duplicate (A-B / B-A) e le coppie di un
--- prodotto con se stesso.
--- ------------------------------------------------------------
+-- Individuare le coppie di prodotti acquistati piu' spesso insieme (nello stesso ordine).
+
 SELECT p1.nome AS prodotto_A,
        p2.nome AS prodotto_B,
        COUNT(*) AS volte_insieme
@@ -85,14 +65,10 @@ JOIN prodotti p2 ON p2.codice_prodotto = r2.codice_prodotto
 GROUP BY p1.nome, p2.nome
 ORDER BY volte_insieme DESC, prodotto_A;
 
-
--- ------------------------------------------------------------
 -- QUERY 5
--- Per ogni cliente: data dell'ultimo ordine, giorni di
--- inattivita' (rispetto all'ultimo ordine registrato nel DB)
--- e valore complessivo generato dal cliente.
--- Utile per individuare i clienti da riattivare.
--- ------------------------------------------------------------
+-- Per ogni cliente: data dell'ultimo ordine, giorni di inattivita' (rispetto all'ultimo ordine registrato nel DB)
+-- e valore complessivo generato dal cliente. Utile per individuare i clienti da riattivare.
+
 SELECT c.nome || ' ' || c.cognome AS cliente,
        MAX(o.data_ordine) AS ultimo_ordine,
        CAST(julianday((SELECT MAX(data_ordine) FROM ordini))

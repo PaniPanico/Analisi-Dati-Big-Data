@@ -2,8 +2,7 @@
 --  DB RELAZIONALE - Negozio di elettronica
 --  Creazione dello schema (SQLite)
 -- ============================================================
---  Traccia: gestione di clienti, prodotti e ordini di un
---  negozio di elettronica.
+--  Traccia: gestione di clienti, prodotti e ordini di un negozio di elettronica.
 -- ============================================================
 
 PRAGMA foreign_keys = ON;
@@ -48,8 +47,7 @@ CREATE TABLE clienti (
 
 -- ------------------------------------------------------------
 -- PRODOTTI
---   Ogni prodotto appartiene a una categoria ed e' fornito
---   da un fornitore.
+--   Ogni prodotto appartiene a una categoria ed e' fornito da un fornitore.
 -- ------------------------------------------------------------
 CREATE TABLE prodotti (
     codice_prodotto       INTEGER PRIMARY KEY,
@@ -76,9 +74,7 @@ CREATE TABLE ordini (
 
 -- ------------------------------------------------------------
 -- RIGHE_ORDINE
---   Ogni ordine contiene una o piu' righe, ciascuna riferita
---   a un prodotto con quantita' e prezzo applicato al momento
---   dell'acquisto.
+--   Ogni ordine contiene una o piu' righe, ciascuna riferita a un prodotto con quantita' e prezzo applicato al momento dell'acquisto.
 -- ------------------------------------------------------------
 CREATE TABLE righe_ordine (
     codice_ordine    INTEGER NOT NULL,

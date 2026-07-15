@@ -121,6 +121,22 @@
   .rel-legend{margin-top:18px;font-size:14.5px;color:var(--muted)}
   .rel-legend code{font-family:var(--mono);color:var(--cyan);background:var(--panel);padding:2px 7px;border-radius:6px}
 
+  /* ---------- diagramma ER (concettuale) ---------- */
+  .erd{margin-top:22px;border:1px solid var(--border);border-radius:16px;
+    background:rgba(255,255,255,.02);padding:20px 14px;overflow-x:auto}
+  .erd .er-svg{display:block;width:100%;min-width:720px;max-width:1010px;height:auto;margin:0 auto}
+  .er-legend{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:20px;
+    padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:rgba(34,211,238,.045)}
+  .er-legend .li{display:inline-flex;align-items:center;gap:9px;font-size:14px;color:var(--muted)}
+  .er-legend .li svg{flex:none}
+  .er-note{margin-top:18px;font-size:14.5px;color:var(--muted)}
+  .er-note code{font-family:var(--mono);color:var(--cyan);background:var(--panel);padding:2px 7px;border-radius:6px}
+
+  /* ---------- schema relazionale (diagramma tabelle + crow's foot) ---------- */
+  .rsd{margin-top:22px;border:1px solid var(--border);border-radius:16px;
+    background:rgba(255,255,255,.02);padding:20px 14px;overflow-x:auto}
+  .rsd .rs-svg{display:block;width:100%;min-width:780px;max-width:1010px;height:auto;margin:0 auto}
+
   /* ---------- queries ---------- */
   .q{scroll-margin-top:80px}
   .q + .q{margin-top:26px}
@@ -181,33 +197,86 @@
     font-weight:800;display:grid;place-items:center;font-size:15px}
   footer{max-width:1120px;margin:0 auto;padding:30px 26px 70px;color:var(--muted2);font-size:13.5px;
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--border)}
+
+  /* ============ MODALITÀ RELATORE (presenter) ============ */
+  #pv-launch{position:fixed;right:20px;bottom:20px;z-index:9000;display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--sans);font-size:14.5px;font-weight:700;color:#0b1020;background:var(--grad);border:0;
+    border-radius:999px;padding:12px 18px;cursor:pointer;box-shadow:0 12px 34px -10px rgba(34,211,238,.65)}
+  #pv-launch:hover{filter:brightness(1.08)}
+  #pv-console{position:fixed;inset:0;z-index:9500;display:none;flex-direction:column;
+    background:radial-gradient(1000px 600px at 15% -10%,rgba(34,211,238,.10),transparent 55%),
+      linear-gradient(180deg,#070b18,#0b1020);color:var(--text);font-family:var(--sans)}
+  #pv-console.on{display:flex}
+  .pvc-top{display:flex;align-items:center;gap:14px;padding:11px 20px;border-bottom:1px solid var(--border);
+    background:rgba(9,13,28,.72);backdrop-filter:blur(10px)}
+  .pvc-top .ttl{font-weight:800;display:flex;align-items:center;gap:10px;letter-spacing:.3px}
+  .pvc-top .ttl .dot{width:11px;height:11px;border-radius:50%;background:var(--grad);box-shadow:0 0 10px var(--cyan)}
+  .pvc-clock{font-family:var(--mono);font-size:13.5px;color:var(--muted)}
+  .pvc-timer{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--cyan);letter-spacing:.5px}
+  .pvc-status{font-size:12.5px;color:var(--muted2);display:inline-flex;align-items:center;gap:7px}
+  .pvc-status .led{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .pvc-status.off .led{background:var(--muted2);box-shadow:none}
+  .pvc-spacer{margin-left:auto}
+  .pvc-btn{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--text);background:var(--panel);
+    border:1px solid var(--border-strong);border-radius:10px;padding:8px 13px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .pvc-btn:hover{background:var(--panel-strong)}
+  .pvc-btn.primary{color:#0b1020;background:var(--grad);border:0;font-weight:700}
+  .pvc-btn.danger{color:#fecaca;border-color:rgba(248,113,113,.45);background:rgba(248,113,113,.08)}
+  .pvc-btn.icon{padding:8px 11px}
+  .pvc-body{flex:1;display:grid;grid-template-columns:1.35fr .9fr;gap:16px;padding:16px 20px;min-height:0}
+  @media(max-width:1000px){.pvc-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr)}}
+  .pvc-pane{display:flex;flex-direction:column;min-height:0;border:1px solid var(--border);border-radius:16px;
+    background:var(--panel);overflow:hidden;box-shadow:var(--shadow)}
+  .pvc-pane .ph{padding:10px 15px;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted2);
+    border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-weight:700}
+  .pvc-pane .ph .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pvc-preview-wrap{flex:1;position:relative;overflow:hidden;background:#05070f}
+  .pvc-preview-wrap iframe{position:absolute;top:0;left:0;border:0;background:var(--bg)}
+  .pvc-nav{display:flex;align-items:center;gap:10px;padding:10px 15px;border-top:1px solid var(--border)}
+  .pvc-nav .pos{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .pvc-notes{flex:1;display:flex;flex-direction:column;min-height:0}
+  .pvc-curslide{padding:12px 15px;border-bottom:1px solid var(--border)}
+  .pvc-curslide .lab{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--cyan);font-weight:700}
+  .pvc-curslide .nm{font-size:19px;font-weight:800;margin-top:2px}
+  .pvc-next{font-size:12.5px;color:var(--muted2);margin-top:6px}
+  .pvc-next b{color:var(--muted)}
+  #pv-notes-edit{flex:1;resize:none;width:100%;border:0;outline:0;padding:16px;font-family:var(--sans);
+    font-size:16.5px;line-height:1.62;color:var(--text);background:transparent}
+  #pv-notes-edit::placeholder{color:var(--muted2)}
+  .pvc-notes-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 15px;border-top:1px solid var(--border)}
+  .pvc-save-ind{font-size:12px;color:var(--green);margin-left:auto;opacity:0;transition:opacity .3s}
+  .pvc-save-ind.show{opacity:1}
+  .pvc-jump{font-family:var(--sans);font-size:13.5px;color:var(--text);background:#141b36;
+    border:1px solid var(--border-strong);border-radius:10px;padding:7px 11px;cursor:pointer;outline:none;max-width:210px}
+  .pvc-hint{font-size:12.5px;color:var(--muted2);padding:0 20px 14px}
+  .pvc-hint kbd{font-family:var(--mono);font-size:11px;background:var(--panel-strong);border:1px solid var(--border);
+    border-radius:6px;padding:1px 6px;color:var(--muted)}
 </style>
 </head>
 <body>
 
 <div id="progress"></div>
 <nav>
-  <div class="brand"><span class="dot"></span>ElettroStore · DB</div>
+  <div class="brand"><span class="dot"></span>ElettroStore</div>
   <div class="navlinks">
     <a href="#scenario">Scenario</a>
     <a href="#perche">Perché relazionale</a>
-    <a href="#modello">Modello dati</a>
-    <a href="#query">Query interattive</a>
+    <a href="#modello-er">Modello ER</a>
+    <a href="#modello">Schema relazionale</a>
+    <a href="#query">Query</a>
     <a href="#fine">Conclusioni</a>
   </div>
 </nav>
 
 <!-- ============ HERO ============ -->
 <section id="hero" class="hero">
-  <div class="eyebrow">● Analisi Dati &amp; Big Data — Progetto d'esame</div>
   <h1>Negozio di elettronica<br><span class="grad-text">un database che parla di business</span></h1>
-  <p class="lead">Dalla richiesta di un cliente reale a un database relazionale che risponde a domande concrete:
+  <p class="lead">Un database relazionale che risponde a domande concrete:
   chi compra cosa, quanto vale ogni cliente, cosa si vende insieme e chi va riattivato.</p>
 
   <div class="meta-row">
-    <div>Dominio: <b>vendita al dettaglio elettronica</b></div>
     <div>Dati demo: <b>15 clienti · 33 prodotti · 60 ordini</b></div>
-    <div>Query: <b>3 richieste + 2 extra “WOW”</b></div>
+    <div>Query: <b>3 richieste + 2 extra</b></div>
   </div>
 </section>
 
@@ -217,32 +286,31 @@
   <h2>La richiesta del cliente</h2>
   <p class="quote">«Gestiamo un negozio di elettronica. Oggi clienti, prodotti e ordini sono su fogli sparsi.
   Vogliamo un sistema che tenga tutto insieme e ci dica <b>chi compra cosa</b> e <b>quanto vale ogni cliente</b>.»</p>
-  <p style="margin-top:22px">Prima di scrivere una riga di codice traduco la richiesta in bisogni informativi concreti.
-  Questi guideranno sia il modello dati sia le query.</p>
+  <p style="margin-top:22px">Traduciamo la richiesta in bisogni informativi concreti.
+  <br>Questi guideranno sia il modello dati sia le query.</p>
 
   <div class="grid cols-2" style="margin-top:22px">
     <div class="card">
       <h3>Cosa dobbiamo memorizzare</h3>
-      <div class="need"><span class="ic">👤</span><div><b>Clienti</b> — anagrafica (nome, email, telefono, città) per riconoscerli e contattarli.</div></div>
-      <div class="need"><span class="ic">📦</span><div><b>Prodotti</b> — con prezzo e giacenza, ognuno in una <b>categoria</b> e da un <b>fornitore</b>.</div></div>
-      <div class="need"><span class="ic">🧾</span><div><b>Ordini</b> — fatti in date diverse, ciascuno con più <b>righe</b> (prodotto, quantità, prezzo applicato).</div></div>
+      <div class="need"><span class="ic">👤</span><div><b>Clienti</b> - anagrafica (nome, email, telefono, città) per riconoscerli e contattarli.</div></div>
+      <div class="need"><span class="ic">📦</span><div><b>Prodotti</b> - con prezzo e giacenza, ognuno in una <b>categoria</b> e da un <b>fornitore</b>.</div></div>
+      <div class="need"><span class="ic">🧾</span><div><b>Ordini</b> - fatti in date diverse, ciascuno con più <b>righe</b> (prodotto, quantità, prezzo applicato).</div></div>
     </div>
     <div class="card">
       <h3>Cosa deve saper rispondere</h3>
       <div class="need"><span class="ic">🔎</span><div>Quali prodotti ha comprato <b>un certo cliente</b>?</div></div>
       <div class="need"><span class="ic">💶</span><div>Quanto ha speso <b>ciascun cliente</b> in totale?</div></div>
       <div class="need"><span class="ic">📅</span><div>Qual è la <b>spesa media mensile</b> per cliente in un anno?</div></div>
-      <div class="need"><span class="ic">🌟</span><div><i>In più:</i> cosa si vende <b>insieme</b>? Chi è <b>inattivo</b> e va riattivato?</div></div>
+      <div class="need"><span class="ic">🌟</span><div><i>Extra</i> cosa si vende <b>insieme</b>? Chi è <b>inattivo</b> e va quindi riattivato?</div></div>
     </div>
   </div>
 </section>
 
 <!-- ============ WHY RELATIONAL ============ -->
 <section id="perche">
-  <div class="eyebrow">02 — La scelta tecnologica</div>
+  <div class="eyebrow">02 — La proposta</div>
   <h2>Perché un database <span class="grad-text">relazionale</span></h2>
-  <p>Il cliente non ci ha chiesto una tecnologia: ci ha dato dei dati. Guardandoli, la natura del problema
-  indica da sola la strada.</p>
+  <p>La natura dei dati forniti dal cliente e le sue esigenze portano inevitambilmente sulla strada relazionale.</p>
 
   <div class="grid cols-2" style="margin-top:22px">
     <div class="card">
@@ -261,95 +329,115 @@
         + <code style="font-family:var(--mono);color:var(--cyan)">GROUP BY</code>: il pane quotidiano di SQL.</p></div>
     </div>
     <div class="card">
-      <h3 style="margin-bottom:12px">E perché non gli altri, <span style="color:var(--muted)">qui</span></h3>
+      <h3 style="margin-bottom:12px">E perché non gli altri...</h3>
       <table class="compare">
         <tr><th>Modello</th><th>Adatto a…</th><th>Su questa traccia</th></tr>
         <tr><td>Relazionale</td><td>Dati tabellari, transazioni, vincoli, report</td><td class="badge-yes">✔ Scelto</td></tr>
         <tr><td>Grafo</td><td>Reti di relazioni, percorsi, “amici di amici”</td><td class="badge-no">Sovradimensionato: poche relazioni ma profonde? No, sono tabellari</td></tr>
         <tr><td>Documentale</td><td>Dati semi-strutturati, ricerca full-text, schema variabile</td><td class="badge-no">L'integrità ordine→cliente sarebbe a carico dell'app</td></tr>
       </table>
-      <p style="font-size:14px;margin-top:14px;color:var(--muted2)">La stessa traccia verrà poi esplorata su Neo4j ed Elasticsearch:
-      confronteremo lo stesso dominio su modelli diversi.</p>
     </div>
+  </div>
+</section>
+
+<!-- ============ MODELLO ER (concettuale) ============ -->
+<section id="modello-er">
+  <div class="eyebrow">03 — Progettazione concettuale</div>
+  <h2>Il modello <span class="grad-text">Entità-Relazione</span></h2>
+  <p>Prima delle tabelle, il dominio si descrive con uno <b>schema ER</b>:
+  entità, attributi e relazioni, in modo indipendente dal DBMS. È il passo che <b>precede il mapping</b>,
+  dal quale nascerà lo schema relazionale della sezione successiva.</p>
+
+  <div class="erd">
+<svg viewBox="10 95 1120 750" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="erd-ti erd-de" class="er-svg">
+<title id="erd-ti">Schema Entita'-Relazione del negozio di elettronica</title>
+<desc id="erd-de">Diagramma ER in notazione Chen: CLIENTE effettua ORDINE, ORDINE contiene PRODOTTO (M:N con quantita e prezzo applicato), CATEGORIA classifica PRODOTTO, FORNITORE fornisce PRODOTTO.</desc>
+<style>
+  .er-svg .erd-ent{fill:#15254a;stroke:#22d3ee;stroke-width:2.2}
+  .er-svg .erd-entlbl{fill:#eaf1ff;font:700 15.5px system-ui,'Segoe UI',sans-serif;text-anchor:middle;letter-spacing:.3px}
+  .er-svg .erd-rel{fill:#2a1e46;stroke:#a855f7;stroke-width:2}
+  .er-svg .erd-rellbl{fill:#f2ecff;font:600 12px system-ui,sans-serif;text-anchor:middle}
+  .er-svg .erd-attr{fill:#111830;stroke:#5a6690;stroke-width:1.4}
+  .er-svg .erd-attrlbl{fill:#c6cfe8;font:400 11px system-ui,sans-serif;text-anchor:middle}
+  .er-svg .erd-ln{stroke:#7480a6;stroke-width:1.5;fill:none}
+  .er-svg .erd-card{fill:#fbbf24;font:700 14px system-ui,sans-serif;text-anchor:middle}
+</style>
+<line x1="250.0" y1="440.0" x2="409.0" y2="440.0" class="erd-ln"/><line x1="409.0" y1="444.2" x2="568.0" y2="444.2" class="erd-ln"/><line x1="409.0" y1="435.8" x2="568.0" y2="435.8" class="erd-ln"/><line x1="568.0" y1="444.2" x2="727.0" y2="444.2" class="erd-ln"/><line x1="568.0" y1="435.8" x2="727.0" y2="435.8" class="erd-ln"/><line x1="727.0" y1="440.0" x2="886.0" y2="440.0" class="erd-ln"/><line x1="886.0" y1="140.0" x2="886.0" y2="290.0" class="erd-ln"/><line x1="881.8" y1="290.0" x2="881.8" y2="440.0" class="erd-ln"/><line x1="890.2" y1="290.0" x2="890.2" y2="440.0" class="erd-ln"/><line x1="886.0" y1="760.0" x2="886.0" y2="600.0" class="erd-ln"/><line x1="890.2" y1="600.0" x2="890.2" y2="440.0" class="erd-ln"/><line x1="881.8" y1="600.0" x2="881.8" y2="440.0" class="erd-ln"/><text x="335" y="427" class="erd-card">1</text><text x="484" y="427" class="erd-card">N</text><text x="653" y="427" class="erd-card">M</text><text x="802" y="427" class="erd-card">N</text><text x="908" y="220" class="erd-card">1</text><text x="908" y="372" class="erd-card">N</text><text x="908" y="690" class="erd-card">1</text><text x="908" y="516" class="erd-card">N</text><line x1="179.0" y1="440.0" x2="134.0" y2="340.0" class="erd-ln"/><ellipse cx="78.0" cy="340.0" rx="56" ry="15" class="erd-attr"/><text x="78.0" y="344.0" class="erd-attrlbl" text-decoration="underline">codice_cliente</text><line x1="179.0" y1="440.0" x2="134.0" y2="380.0" class="erd-ln"/><ellipse cx="78.0" cy="380.0" rx="56" ry="15" class="erd-attr"/><text x="78.0" y="384.0" class="erd-attrlbl">nome</text><line x1="179.0" y1="440.0" x2="134.0" y2="420.0" class="erd-ln"/><ellipse cx="78.0" cy="420.0" rx="56" ry="15" class="erd-attr"/><text x="78.0" y="424.0" class="erd-attrlbl">cognome</text><line x1="179.0" y1="440.0" x2="134.0" y2="460.0" class="erd-ln"/><ellipse cx="78.0" cy="460.0" rx="56" ry="15" class="erd-attr"/><text x="78.0" y="464.0" class="erd-attrlbl">email</text><line x1="179.0" y1="440.0" x2="134.0" y2="500.0" class="erd-ln"/><ellipse cx="78.0" cy="500.0" rx="56" ry="15" class="erd-attr"/><text x="78.0" y="504.0" class="erd-attrlbl">telefono</text><line x1="179.0" y1="440.0" x2="134.0" y2="540.0" class="erd-ln"/><ellipse cx="78.0" cy="540.0" rx="56" ry="15" class="erd-attr"/><text x="78.0" y="544.0" class="erd-attrlbl">citta</text><line x1="957.0" y1="440.0" x2="1008.0" y2="360.0" class="erd-ln"/><ellipse cx="1064.0" cy="360.0" rx="56" ry="15" class="erd-attr"/><text x="1064.0" y="364.0" class="erd-attrlbl" text-decoration="underline">codice_prodotto</text><line x1="957.0" y1="440.0" x2="1008.0" y2="400.0" class="erd-ln"/><ellipse cx="1064.0" cy="400.0" rx="56" ry="15" class="erd-attr"/><text x="1064.0" y="404.0" class="erd-attrlbl">nome</text><line x1="957.0" y1="440.0" x2="1008.0" y2="440.0" class="erd-ln"/><ellipse cx="1064.0" cy="440.0" rx="56" ry="15" class="erd-attr"/><text x="1064.0" y="444.0" class="erd-attrlbl">descrizione</text><line x1="957.0" y1="440.0" x2="1008.0" y2="480.0" class="erd-ln"/><ellipse cx="1064.0" cy="480.0" rx="56" ry="15" class="erd-attr"/><text x="1064.0" y="484.0" class="erd-attrlbl">prezzo_unitario</text><line x1="957.0" y1="440.0" x2="1008.0" y2="520.0" class="erd-ln"/><ellipse cx="1064.0" cy="520.0" rx="56" ry="15" class="erd-attr"/><text x="1064.0" y="524.0" class="erd-attrlbl">quantita_disponibile</text><line x1="815.0" y1="140.0" x2="770.0" y2="121.0" class="erd-ln"/><ellipse cx="714.0" cy="121.0" rx="56" ry="15" class="erd-attr"/><text x="714.0" y="125.0" class="erd-attrlbl" text-decoration="underline">codice_categoria</text><line x1="815.0" y1="140.0" x2="770.0" y2="159.0" class="erd-ln"/><ellipse cx="714.0" cy="159.0" rx="56" ry="15" class="erd-attr"/><text x="714.0" y="163.0" class="erd-attrlbl">nome</text><line x1="815.0" y1="760.0" x2="770.0" y2="703.0" class="erd-ln"/><ellipse cx="714.0" cy="703.0" rx="56" ry="15" class="erd-attr"/><text x="714.0" y="707.0" class="erd-attrlbl" text-decoration="underline">codice_fornitore</text><line x1="815.0" y1="760.0" x2="770.0" y2="741.0" class="erd-ln"/><ellipse cx="714.0" cy="741.0" rx="56" ry="15" class="erd-attr"/><text x="714.0" y="745.0" class="erd-attrlbl">ragione_sociale</text><line x1="815.0" y1="760.0" x2="770.0" y2="779.0" class="erd-ln"/><ellipse cx="714.0" cy="779.0" rx="56" ry="15" class="erd-attr"/><text x="714.0" y="783.0" class="erd-attrlbl">telefono</text><line x1="815.0" y1="760.0" x2="770.0" y2="817.0" class="erd-ln"/><ellipse cx="714.0" cy="817.0" rx="56" ry="15" class="erd-attr"/><text x="714.0" y="821.0" class="erd-attrlbl">email</text><line x1="568.0" y1="412.0" x2="506.0" y2="340.0" class="erd-ln"/><ellipse cx="506.0" cy="325.0" rx="52" ry="15" class="erd-attr"/><text x="506.0" y="329.0" class="erd-attrlbl" text-decoration="underline">codice_ordine</text><line x1="568.0" y1="412.0" x2="630.0" y2="340.0" class="erd-ln"/><ellipse cx="630.0" cy="325.0" rx="52" ry="15" class="erd-attr"/><text x="630.0" y="329.0" class="erd-attrlbl">data_ordine</text><line x1="727.0" y1="475.0" x2="665.0" y2="520.0" class="erd-ln"/><ellipse cx="665.0" cy="535.0" rx="52" ry="15" class="erd-attr"/><text x="665.0" y="539.0" class="erd-attrlbl">quantita</text><line x1="727.0" y1="475.0" x2="789.0" y2="520.0" class="erd-ln"/><ellipse cx="789.0" cy="535.0" rx="52" ry="15" class="erd-attr"/><text x="789.0" y="539.0" class="erd-attrlbl">prezzo_applicato</text><rect x="179.0" y="412.0" width="142" height="56" rx="5" class="erd-ent"/><text x="250" y="446" class="erd-entlbl">CLIENTE</text><rect x="497.0" y="412.0" width="142" height="56" rx="5" class="erd-ent"/><text x="568" y="446" class="erd-entlbl">ORDINE</text><rect x="815.0" y="412.0" width="142" height="56" rx="5" class="erd-ent"/><text x="886" y="446" class="erd-entlbl">PRODOTTO</text><rect x="815.0" y="112.0" width="142" height="56" rx="5" class="erd-ent"/><text x="886" y="146" class="erd-entlbl">CATEGORIA</text><rect x="815.0" y="732.0" width="142" height="56" rx="5" class="erd-ent"/><text x="886" y="766" class="erd-entlbl">FORNITORE</text><polygon points="409,405.0 470.0,440 409,475.0 348.0,440" class="erd-rel"/><text x="409" y="445" class="erd-rellbl">effettua</text><polygon points="727,405.0 788.0,440 727,475.0 666.0,440" class="erd-rel"/><text x="727" y="445" class="erd-rellbl">contiene</text><polygon points="886,255.0 947.0,290 886,325.0 825.0,290" class="erd-rel"/><text x="886" y="295" class="erd-rellbl">classifica</text><polygon points="886,565.0 947.0,600 886,635.0 825.0,600" class="erd-rel"/><text x="886" y="605" class="erd-rellbl">fornisce</text>
+</svg>
+  </div>
+
+  <div class="er-legend">
+    <span class="li"><svg width="34" height="20"><rect x="2" y="3" width="30" height="14" rx="3" fill="#15254a" stroke="#22d3ee" stroke-width="2"/></svg><b style="color:var(--text)">Entità</b></span>
+    <span class="li"><svg width="34" height="20"><polygon points="17,2 32,10 17,18 2,10" fill="#2a1e46" stroke="#a855f7" stroke-width="2"/></svg>Relazione</span>
+    <span class="li"><svg width="34" height="20"><ellipse cx="17" cy="10" rx="15" ry="8" fill="#111830" stroke="#5a6690" stroke-width="1.6"/></svg>Attributo</span>
+    <span class="li"><svg width="34" height="20"><ellipse cx="17" cy="10" rx="15" ry="8" fill="#111830" stroke="#5a6690" stroke-width="1.6"/><line x1="9" y1="14" x2="25" y2="14" stroke="#c6cfe8" stroke-width="1.3"/></svg>Attributo chiave</span>
+    <span class="li"><svg width="34" height="20"><line x1="2" y1="8" x2="32" y2="8" stroke="#7480a6" stroke-width="1.7"/><line x1="2" y1="12" x2="32" y2="12" stroke="#7480a6" stroke-width="1.7"/></svg>Partecipazione totale</span>
+    <span class="li"><svg width="34" height="20"><line x1="2" y1="10" x2="32" y2="10" stroke="#7480a6" stroke-width="1.7"/></svg>Partecipazione parziale</span>
+    <span class="li"><b style="color:var(--gold);font-family:var(--mono)">1 · N · M</b>Rapporto di cardinalità</span>
+  </div>
+
+  <div class="er-note">
+    <b style="color:var(--text)">Come si legge:</b>
+    ogni <b>ORDINE</b> è sempre di un cliente e ogni <b>PRODOTTO</b> ha sempre una categoria e un fornitore →
+    partecipazione <b>totale</b> (doppia linea), coerente con i vincoli <code>NOT NULL</code> delle chiavi esterne.
+    La relazione <b>M:N</b> <code>contiene</code> porta gli attributi <code>quantità</code> e <code>prezzo_applicato</code>:
+    nel passo di <b>mapping</b> diventerà la tabella-ponte <b>righe_ordine</b> (raggiunta da <code>contiene</code> e <code>compare_in</code>).
   </div>
 </section>
 
 <!-- ============ MODELLO ============ -->
 <section id="modello">
-  <div class="eyebrow">03 — Il modello dati</div>
-  <h2>Schema relazionale — 6 tabelle</h2>
-  <p>Normalizzato in 3ª forma normale: categorie e fornitori separati dai prodotti, e la relazione
-  molti-a-molti ordini↔prodotti risolta dalla tabella <b>righe_ordine</b>.</p>
+  <div class="eyebrow">04 — Progettazione logica</div>
+  <h2>Dallo schema ER allo <span class="grad-text">schema relazionale</span> - 6 tabelle</h2>
+  <p>Applicando l'algoritmo di <b>mapping</b> allo schema ER: ogni entità diventa una tabella, le relazioni
+  1:N si traducono in <b>foreign key</b> e la M:N <code style="font-family:var(--mono);color:var(--cyan)">contiene</code>
+  nella tabella <b>righe_ordine</b></p>
 
-  <div class="er" style="margin-top:22px">
-    <div class="tbl">
-      <div class="head"><span class="ic">🏷️</span> categorie</div>
-      <ul>
-        <li><span class="k pk">PK</span><b>codice_categoria</b></li>
-        <li>nome</li>
-      </ul>
-    </div>
-    <div class="tbl">
-      <div class="head"><span class="ic">🏭</span> fornitori</div>
-      <ul>
-        <li><span class="k pk">PK</span><b>codice_fornitore</b></li>
-        <li>ragione_sociale</li>
-        <li>telefono · email</li>
-      </ul>
-    </div>
-    <div class="tbl">
-      <div class="head"><span class="ic">👤</span> clienti</div>
-      <ul>
-        <li><span class="k pk">PK</span><b>codice_cliente</b></li>
-        <li>nome · cognome</li>
-        <li>email · telefono · città</li>
-      </ul>
-    </div>
-    <div class="tbl">
-      <div class="head"><span class="ic">📦</span> prodotti</div>
-      <ul>
-        <li><span class="k pk">PK</span><b>codice_prodotto</b></li>
-        <li>nome · descrizione · prezzo</li>
-        <li>quantità_disponibile</li>
-        <li><span class="k fk">FK</span>codice_categoria</li>
-        <li><span class="k fk">FK</span>codice_fornitore</li>
-      </ul>
-    </div>
-    <div class="tbl">
-      <div class="head"><span class="ic">🧾</span> ordini</div>
-      <ul>
-        <li><span class="k pk">PK</span><b>codice_ordine</b></li>
-        <li>data_ordine</li>
-        <li><span class="k fk">FK</span>codice_cliente</li>
-      </ul>
-    </div>
-    <div class="tbl" style="border-color:var(--border-strong)">
-      <div class="head"><span class="ic">🔗</span> righe_ordine</div>
-      <ul>
-        <li><span class="k pk">PK</span><span class="k fk">FK</span><b>codice_ordine</b></li>
-        <li><span class="k pk">PK</span><span class="k fk">FK</span><b>codice_prodotto</b></li>
-        <li>quantità · prezzo_applicato</li>
-      </ul>
-    </div>
+    <div class="rsd">
+<svg viewBox="0 20 964 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rs-ti rs-de" class="rs-svg">
+<title id="rs-ti">Schema relazionale del negozio di elettronica</title>
+<desc id="rs-de">Diagramma delle sei tabelle collegate dalle foreign key in notazione crow foot.</desc>
+<style>
+  .rs-svg .rs-body{fill:#0e1730;stroke:#2e3d68;stroke-width:1.4}
+  .rs-svg .rs-head{fill:#183358;stroke:#2e3d68;stroke-width:1.4}
+  .rs-svg .rs-htext{fill:#eaf1ff;font:700 14px system-ui,'Segoe UI',sans-serif;text-anchor:middle;letter-spacing:.4px}
+  .rs-svg .rs-sep{stroke:#ffffff14;stroke-width:1}
+  .rs-svg .rs-type{fill:#7f8cb2;font:400 11px ui-monospace,Consolas,monospace;text-anchor:start}
+  .rs-svg .rs-col{fill:#d6ddf0;font:400 12.5px system-ui,sans-serif;text-anchor:start}
+  .rs-svg .rs-col-pk{fill:#ffffff;font-weight:700}
+  .rs-svg .rs-pk{fill:#3b3113;stroke:#fbbf24;stroke-width:.8}
+  .rs-svg .rs-pkt{fill:#fbbf24;font:700 10px ui-monospace,Consolas,monospace;text-anchor:middle}
+  .rs-svg .rs-fk{fill:#0e3040;stroke:#22d3ee;stroke-width:.8}
+  .rs-svg .rs-fkt{fill:#22d3ee;font:700 10px ui-monospace,Consolas,monospace;text-anchor:middle}
+  .rs-svg .rs-note{fill:#8390b5;font:400 10.5px ui-monospace,Consolas,monospace;text-anchor:start}
+  .rs-svg .rs-ln{stroke:#8591b8;stroke-width:1.7;fill:none}
+  .rs-svg .rs-ring{fill:none;stroke:#8591b8;stroke-width:1.7}
+  .rs-svg .rs-lblbg{fill:#141d34;stroke:#3a4570;stroke-width:1}
+  .rs-svg .rs-lbl{fill:#c9b6f2;font:600 12px system-ui,sans-serif;text-anchor:middle}
+</style>
+<rect x="30" y="40" width="244" height="206" rx="8" class="rs-body"/><path d="M38,40 h228 a8,8 0 0 1 8,8 v24 h-244 v-24 a8,8 0 0 1 8,-8 z" class="rs-head"/><text x="152" y="61" class="rs-htext">CLIENTI</text><text x="43" y="91" class="rs-type">int</text><text x="80" y="91" class="rs-col rs-col-pk">codice_cliente</text><rect x="238" y="78" width="24" height="17" rx="4" class="rs-pk"/><text x="250" y="90" class="rs-pkt">PK</text><line x1="30" y1="101" x2="274" y2="101" class="rs-sep"/><text x="43" y="120" class="rs-type">text</text><text x="80" y="120" class="rs-col">nome</text><line x1="30" y1="130" x2="274" y2="130" class="rs-sep"/><text x="43" y="149" class="rs-type">text</text><text x="80" y="149" class="rs-col">cognome</text><line x1="30" y1="159" x2="274" y2="159" class="rs-sep"/><text x="43" y="178" class="rs-type">text</text><text x="80" y="178" class="rs-col">email</text><line x1="30" y1="188" x2="274" y2="188" class="rs-sep"/><text x="43" y="207" class="rs-type">text</text><text x="80" y="207" class="rs-col">telefono</text><line x1="30" y1="217" x2="274" y2="217" class="rs-sep"/><text x="43" y="236" class="rs-type">text</text><text x="80" y="236" class="rs-col">citta</text><rect x="360" y="40" width="244" height="90" rx="8" class="rs-body"/><path d="M368,40 h228 a8,8 0 0 1 8,8 v24 h-244 v-24 a8,8 0 0 1 8,-8 z" class="rs-head"/><text x="482" y="61" class="rs-htext">CATEGORIE</text><text x="373" y="91" class="rs-type">int</text><text x="410" y="91" class="rs-col rs-col-pk">codice_categoria</text><rect x="568" y="78" width="24" height="17" rx="4" class="rs-pk"/><text x="580" y="90" class="rs-pkt">PK</text><line x1="360" y1="101" x2="604" y2="101" class="rs-sep"/><text x="373" y="120" class="rs-type">text</text><text x="410" y="120" class="rs-col">nome</text><rect x="690" y="40" width="244" height="148" rx="8" class="rs-body"/><path d="M698,40 h228 a8,8 0 0 1 8,8 v24 h-244 v-24 a8,8 0 0 1 8,-8 z" class="rs-head"/><text x="812" y="61" class="rs-htext">FORNITORI</text><text x="703" y="91" class="rs-type">int</text><text x="740" y="91" class="rs-col rs-col-pk">codice_fornitore</text><rect x="898" y="78" width="24" height="17" rx="4" class="rs-pk"/><text x="910" y="90" class="rs-pkt">PK</text><line x1="690" y1="101" x2="934" y2="101" class="rs-sep"/><text x="703" y="120" class="rs-type">text</text><text x="740" y="120" class="rs-col">ragione_sociale</text><line x1="690" y1="130" x2="934" y2="130" class="rs-sep"/><text x="703" y="149" class="rs-type">text</text><text x="740" y="149" class="rs-col">telefono</text><line x1="690" y1="159" x2="934" y2="159" class="rs-sep"/><text x="703" y="178" class="rs-type">text</text><text x="740" y="178" class="rs-col">email</text><rect x="30" y="350" width="244" height="119" rx="8" class="rs-body"/><path d="M38,350 h228 a8,8 0 0 1 8,8 v24 h-244 v-24 a8,8 0 0 1 8,-8 z" class="rs-head"/><text x="152" y="371" class="rs-htext">ORDINI</text><text x="43" y="401" class="rs-type">int</text><text x="80" y="401" class="rs-col rs-col-pk">codice_ordine</text><rect x="238" y="388" width="24" height="17" rx="4" class="rs-pk"/><text x="250" y="400" class="rs-pkt">PK</text><line x1="30" y1="411" x2="274" y2="411" class="rs-sep"/><text x="43" y="430" class="rs-type">int</text><text x="80" y="430" class="rs-col">codice_cliente</text><rect x="238" y="417" width="24" height="17" rx="4" class="rs-fk"/><text x="250" y="429" class="rs-fkt">FK</text><line x1="30" y1="440" x2="274" y2="440" class="rs-sep"/><text x="43" y="459" class="rs-type">text</text><text x="80" y="459" class="rs-col">data_ordine</text><rect x="600" y="300" width="252" height="235" rx="8" class="rs-body"/><path d="M608,300 h236 a8,8 0 0 1 8,8 v24 h-252 v-24 a8,8 0 0 1 8,-8 z" class="rs-head"/><text x="726" y="321" class="rs-htext">PRODOTTI</text><text x="613" y="351" class="rs-type">int</text><text x="650" y="351" class="rs-col rs-col-pk">codice_prodotto</text><rect x="816" y="338" width="24" height="17" rx="4" class="rs-pk"/><text x="828" y="350" class="rs-pkt">PK</text><line x1="600" y1="361" x2="852" y2="361" class="rs-sep"/><text x="613" y="380" class="rs-type">text</text><text x="650" y="380" class="rs-col">nome</text><line x1="600" y1="390" x2="852" y2="390" class="rs-sep"/><text x="613" y="409" class="rs-type">text</text><text x="650" y="409" class="rs-col">descrizione</text><line x1="600" y1="419" x2="852" y2="419" class="rs-sep"/><text x="613" y="438" class="rs-type">real</text><text x="650" y="438" class="rs-col">prezzo_unitario</text><line x1="600" y1="448" x2="852" y2="448" class="rs-sep"/><text x="613" y="467" class="rs-type">int</text><text x="650" y="467" class="rs-col">quantita_disponibile</text><line x1="600" y1="477" x2="852" y2="477" class="rs-sep"/><text x="613" y="496" class="rs-type">int</text><text x="650" y="496" class="rs-col">codice_categoria</text><rect x="816" y="483" width="24" height="17" rx="4" class="rs-fk"/><text x="828" y="495" class="rs-fkt">FK</text><line x1="600" y1="506" x2="852" y2="506" class="rs-sep"/><text x="613" y="525" class="rs-type">int</text><text x="650" y="525" class="rs-col">codice_fornitore</text><rect x="816" y="512" width="24" height="17" rx="4" class="rs-fk"/><text x="828" y="524" class="rs-fkt">FK</text><rect x="320" y="650" width="300" height="148" rx="8" class="rs-body"/><path d="M328,650 h284 a8,8 0 0 1 8,8 v24 h-300 v-24 a8,8 0 0 1 8,-8 z" class="rs-head"/><text x="470" y="671" class="rs-htext">RIGHE_ORDINE</text><text x="333" y="701" class="rs-type">int</text><text x="370" y="701" class="rs-col rs-col-pk">codice_ordine</text><rect x="498" y="688" width="24" height="17" rx="4" class="rs-pk"/><text x="510" y="700" class="rs-pkt">PK</text><rect x="527" y="688" width="24" height="17" rx="4" class="rs-fk"/><text x="539" y="700" class="rs-fkt">FK</text><text x="556" y="701" class="rs-note">&#8594; ordini</text><line x1="320" y1="711" x2="620" y2="711" class="rs-sep"/><text x="333" y="730" class="rs-type">int</text><text x="370" y="730" class="rs-col rs-col-pk">codice_prodotto</text><rect x="486" y="717" width="24" height="17" rx="4" class="rs-pk"/><text x="498" y="729" class="rs-pkt">PK</text><rect x="515" y="717" width="24" height="17" rx="4" class="rs-fk"/><text x="527" y="729" class="rs-fkt">FK</text><text x="544" y="730" class="rs-note">&#8594; prodotti</text><line x1="320" y1="740" x2="620" y2="740" class="rs-sep"/><text x="333" y="759" class="rs-type">int</text><text x="370" y="759" class="rs-col">quantita</text><line x1="320" y1="769" x2="620" y2="769" class="rs-sep"/><text x="333" y="788" class="rs-type">real</text><text x="370" y="788" class="rs-col">prezzo_applicato</text><path d="M152,246 L152,264" class="rs-ln"/><line x1="144" y1="255" x2="160" y2="255" class="rs-ln"/><path d="M152,264 C152,302 152,288 152,326" class="rs-ln"/><path d="M152,326 L152,336" class="rs-ln"/><circle cx="152" cy="330" r="3.6" class="rs-ring"/><line x1="152" y1="336" x2="143" y2="350" class="rs-ln"/><line x1="152" y1="336" x2="152" y2="350" class="rs-ln"/><line x1="152" y1="336" x2="161" y2="350" class="rs-ln"/><rect x="118" y="284" width="69" height="21" rx="10" class="rs-lblbg"/><text x="152" y="299" class="rs-lbl">effettua</text><path d="M482,130 L482,148" class="rs-ln"/><line x1="474" y1="139" x2="490" y2="139" class="rs-ln"/><path d="M482,148 C482,206 660,218 660,276" class="rs-ln"/><path d="M660,276 L660,286" class="rs-ln"/><circle cx="660" cy="280" r="3.6" class="rs-ring"/><line x1="660" y1="286" x2="651" y2="300" class="rs-ln"/><line x1="660" y1="286" x2="660" y2="300" class="rs-ln"/><line x1="660" y1="286" x2="669" y2="300" class="rs-ln"/><rect x="530" y="201" width="82" height="21" rx="10" class="rs-lblbg"/><text x="571" y="216" class="rs-lbl">classifica</text><path d="M812,188 L812,206" class="rs-ln"/><line x1="804" y1="197" x2="820" y2="197" class="rs-ln"/><path d="M812,206 C812,244 790,238 790,276" class="rs-ln"/><path d="M790,276 L790,286" class="rs-ln"/><circle cx="790" cy="280" r="3.6" class="rs-ring"/><line x1="790" y1="286" x2="781" y2="300" class="rs-ln"/><line x1="790" y1="286" x2="790" y2="300" class="rs-ln"/><line x1="790" y1="286" x2="799" y2="300" class="rs-ln"/><rect x="767" y="230" width="69" height="21" rx="10" class="rs-lblbg"/><text x="801" y="245" class="rs-lbl">fornisce</text><path d="M152,469 L152,487" class="rs-ln"/><line x1="144" y1="478" x2="160" y2="478" class="rs-ln"/><path d="M152,487 C152,550 390,563 390,626" class="rs-ln"/><path d="M390,626 L390,636" class="rs-ln"/><circle cx="390" cy="630" r="3.6" class="rs-ring"/><line x1="390" y1="636" x2="381" y2="650" class="rs-ln"/><line x1="390" y1="636" x2="390" y2="650" class="rs-ln"/><line x1="390" y1="636" x2="399" y2="650" class="rs-ln"/><rect x="237" y="546" width="69" height="21" rx="10" class="rs-lblbg"/><text x="271" y="560" class="rs-lbl">contiene</text><path d="M726,535 L726,553" class="rs-ln"/><line x1="718" y1="544" x2="734" y2="544" class="rs-ln"/><path d="M726,553 C726,591 560,588 560,626" class="rs-ln"/><path d="M560,626 L560,636" class="rs-ln"/><circle cx="560" cy="630" r="3.6" class="rs-ring"/><line x1="560" y1="636" x2="551" y2="650" class="rs-ln"/><line x1="560" y1="636" x2="560" y2="650" class="rs-ln"/><line x1="560" y1="636" x2="569" y2="650" class="rs-ln"/><rect x="602" y="578" width="82" height="21" rx="10" class="rs-lblbg"/><text x="643" y="594" class="rs-lbl">compare_in</text>
+</svg>
   </div>
 
-  <div class="rel-legend">
-    <b style="color:var(--text)">Relazioni:</b>
-    <code>categorie 1—N prodotti</code>
-    <code>fornitori 1—N prodotti</code>
-    <code>clienti 1—N ordini</code>
-    <code>ordini 1—N righe_ordine</code>
-    <code>prodotti 1—N righe_ordine</code>
-    &nbsp;→ <span style="color:var(--muted)">righe_ordine è il ponte N—N tra ordini e prodotti.</span>
+  <div class="er-legend">
+    <span class="li"><svg width="30" height="18"><rect x="1" y="2" width="26" height="14" rx="4" fill="#3b3113" stroke="#fbbf24"/><text x="14" y="12.5" fill="#fbbf24" font-family="monospace" font-size="9" font-weight="700" text-anchor="middle">PK</text></svg>Chiave primaria</span>
+    <span class="li"><svg width="30" height="18"><rect x="1" y="2" width="26" height="14" rx="4" fill="#0e3040" stroke="#22d3ee"/><text x="14" y="12.5" fill="#22d3ee" font-family="monospace" font-size="9" font-weight="700" text-anchor="middle">FK</text></svg>Chiave esterna</span>
+    <span class="li"><svg width="34" height="18"><line x1="2" y1="9" x2="32" y2="9" stroke="#8591b8" stroke-width="1.7"/><line x1="22" y1="3" x2="22" y2="15" stroke="#8591b8" stroke-width="1.7"/></svg>Lato «uno» (1)</span>
+    <span class="li"><svg width="34" height="18"><line x1="2" y1="9" x2="20" y2="9" stroke="#8591b8" stroke-width="1.7"/><circle cx="17" cy="9" r="3" fill="none" stroke="#8591b8" stroke-width="1.5"/><line x1="21" y1="9" x2="32" y2="3" stroke="#8591b8" stroke-width="1.7"/><line x1="21" y1="9" x2="33" y2="9" stroke="#8591b8" stroke-width="1.7"/><line x1="21" y1="9" x2="32" y2="15" stroke="#8591b8" stroke-width="1.7"/></svg>Lato «molti» (N)</span>
+    <span class="li"><b style="color:#8390b5;font-family:var(--mono)">&#8594; ordini</b>&nbsp;riferimento FK</span>
+  </div>
+
+  <div class="er-note">
+    <b style="color:var(--text)">Il ponte N—N:</b> la relazione molti-a-molti tra <b>ordini</b> e <b>prodotti</b> è risolta dalla tabella
+    <b>righe_ordine</b>, la cui chiave primaria è la coppia <code>(codice_ordine, codice_prodotto)</code> - entrambe
+    anche foreign key. Le linee mostrano visivamente le cinque foreign key dello schema.
   </div>
 </section>
 
 <!-- ============ QUERY ============ -->
 <section id="query">
-  <div class="eyebrow">04 — Il cuore del progetto</div>
-  <h2>Le query, <span class="grad-text">dal vivo</span></h2>
-  <p>Ogni query qui sotto è <b>eseguita davvero</b> nel browser sugli stessi dati del database: muovi i controlli
-  e il risultato si ricalcola. A fianco trovi l'SQL identico a quello in <span class="pill">03_queries.sql</span>.</p>
+  <div class="eyebrow">05 — Come interrogare il DB</div>
+  <h2>Le <span class="grad-text">query</span></h2>
 
   <!-- Q1 -->
   <div class="q card" id="q1">
@@ -359,7 +447,6 @@
         <h3>Prodotti acquistati da un cliente</h3>
         <p>Tutti i prodotti (distinti) ordinati da un cliente, con la loro categoria.</p>
       </div>
-      <span class="chip">Richiesta dalla traccia</span>
     </div>
     <div class="controls">
       <span class="lbl">Cliente</span>
@@ -391,7 +478,6 @@
         <h3>Totale speso da ciascun cliente</h3>
         <p>Somma di <span class="pill">quantità × prezzo_applicato</span> su tutti gli ordini del cliente.</p>
       </div>
-      <span class="chip">Richiesta dalla traccia</span>
     </div>
     <div class="controls">
       <span class="lbl">Ordina per totale</span>
@@ -423,7 +509,6 @@
         <h3>Spesa media mensile per cliente <span style="color:var(--muted2);font-weight:400;font-size:16px">(anno 2025)</span></h3>
         <p>Prima il totale per ogni mese in cui il cliente ha ordinato, poi la media di quei totali.</p>
       </div>
-      <span class="chip">Richiesta dalla traccia</span>
     </div>
     <div class="controls">
       <span class="lbl">Ordina per media</span>
@@ -459,10 +544,10 @@
     <div class="qhead">
       <span class="qnum">Q4</span>
       <div class="qtitle">
-        <h3>Prodotti acquistati insieme <span style="color:var(--muted2);font-weight:400;font-size:16px">(market basket)</span></h3>
+        <h3>Prodotti acquistati insieme</h3>
         <p>Coppie di prodotti che compaiono nello stesso ordine, ordinate per frequenza.</p>
       </div>
-      <span class="chip wow">🌟 Extra “WOW”</span>
+      <span class="chip wow">🌟 Extra</span>
     </div>
     <div class="controls">
       <span class="lbl">Ordina per frequenza</span>
@@ -472,7 +557,7 @@
       </div>
     </div>
     <div class="qbody">
-      <pre class="sql"><span class="cm">-- self-join sullo stesso ordine; p1&lt;p2 evita duplicati e coppie A-A</span>
+      <pre class="sql">
 <span class="kw">SELECT</span> p1.nome <span class="kw">AS</span> prodotto_A,
        p2.nome <span class="kw">AS</span> prodotto_B,
        <span class="fn">COUNT</span>(*) <span class="kw">AS</span> volte_insieme
@@ -489,9 +574,8 @@
         <div id="q4-out"></div>
       </div>
     </div>
-    <div class="wowbox">💡 <b>Perché fa dire WOW:</b> è la base del <b>cross-selling</b>. Sapere cosa finisce nello stesso carrello
-      permette bundle (“chi compra il Galaxy compra la cover”), suggerimenti “spesso acquistati insieme” e posizionamento a scaffale.
-      Con più dati diventa un motore di raccomandazione.</div>
+    <div class="wowbox"> È la base del <b>cross-selling</b>. Sapere cosa finisce nello stesso carrello 
+    consente l'ideazione di bundle efficaci, suggerimenti “spesso acquistati insieme” (Amazon like) e posizionamento a scaffale.</div>
   </div>
 
   <!-- Q5 -->
@@ -502,7 +586,7 @@
         <h3>Inattività &amp; valore per cliente</h3>
         <p>Ultimo ordine, giorni trascorsi dall'ultimo acquisto e valore totale generato.</p>
       </div>
-      <span class="chip wow">🌟 Extra “WOW”</span>
+      <span class="chip wow">🌟 Extra</span>
     </div>
     <div class="controls">
       <span class="lbl">Ordina per giorni inattivo</span>
@@ -527,26 +611,23 @@
         <div id="q5-out"></div>
       </div>
     </div>
-    <div class="wowbox">💡 <b>Perché fa dire WOW:</b> unisce <b>recency</b> e <b>valore</b> in un colpo solo → è una mini
-      analisi <b>RFM</b>. In alto trovi i clienti “dormienti” ma preziosi: i candidati perfetti per una campagna di
+    <div class="wowbox">Unisce <b>recency</b> e <b>valore</b>. In alto trovi i clienti “dormienti”: i candidati perfetti per una campagna di
       <b>retention</b> mirata prima di perderli.</div>
   </div>
 </section>
 
 <!-- ============ FINE ============ -->
 <section id="fine">
-  <div class="eyebrow">05 — In sintesi</div>
+  <div class="eyebrow">06 — In sintesi</div>
   <h2>Conclusioni</h2>
-  <div class="grid cols-3" style="margin:22px 0">
+  <div class="grid cols-2" style="margin:22px 0">
     <div class="card"><h3 class="grad-text">Modello solido</h3><p style="font-size:15px">6 tabelle normalizzate, vincoli e foreign key che garantiscono dati sempre coerenti.</p></div>
     <div class="card"><h3 class="grad-text">Risposte reali</h3><p style="font-size:15px">Le 3 domande della traccia + 2 query extra che trasformano i dati in decisioni di business.</p></div>
-    <div class="card"><h3 class="grad-text">Riproducibile</h3><p style="font-size:15px">Script SQL e Python versionati: chiunque ricostruisce il DB ed esegue le query con un comando.</p></div>
-  </div>
+    </div>
 </section>
 
 <footer>
-  <div>Progetto d'esame · Analisi Dati &amp; Big Data — Negozio di elettronica (DB relazionale)</div>
-  <div>File: <span class="pill">01_schema.sql</span> <span class="pill">02_insert.sql</span> <span class="pill">03_queries.sql</span> <span class="pill">query_negozio.py</span></div>
+  <div>ElettroStore - Database relazionale</div>
 </footer>
 
 <script>
@@ -819,6 +900,7 @@ function runQ5(dir){
 /* ================= wiring ================= */
 // Q1 dropdown
 const sel=document.getElementById('q1-cliente');
+sel.innerHTML='';   // idempotente: evita opzioni duplicate quando lo script gira nei cloni (anteprima/proiezione)
 DB.clienti.forEach(c=>{
   const o=document.createElement('option');
   o.value=c.id; o.textContent=`${c.id} — ${c.nome} ${c.cognome} (${c.citta})`;
@@ -854,9 +936,511 @@ const obs=new IntersectionObserver(es=>{
     links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));
   }});
 },{rootMargin:'-45% 0px -50% 0px'});
-['scenario','perche','modello','query','fine'].forEach(id=>{
+['scenario','perche','modello-er','modello','query','fine'].forEach(id=>{
   const el=document.getElementById(id); if(el)obs.observe(el);
 });
+</script>
+
+<!-- ============ MODALITÀ RELATORE (presenter mode) ============ -->
+<script id="presenter-js" data-presenter-only>
+if(!window.__AUDIENCE__){ (function(){
+  'use strict';
+
+  /* --- "slide" = punti di aggancio delle note, in ordine di scorrimento --- */
+  const SLIDES = [
+    {id:'hero',     lab:'Apertura',        nm:'Copertina & introduzione'},
+    {id:'scenario', lab:'01 · Contesto',   nm:'La richiesta del cliente'},
+    {id:'perche',    lab:'02 · Scelta',      nm:'Perché un DB relazionale'},
+    {id:'modello-er',lab:'03 · Concettuale', nm:'Modello ER'},
+    {id:'modello',   lab:'04 · Logico',      nm:'Schema relazionale — 6 tabelle'},
+    {id:'q1',        lab:'05 · Query',       nm:'Q1 — Prodotti per cliente'},
+    {id:'q2',        lab:'05 · Query',       nm:'Q2 — Totale per cliente'},
+    {id:'q3',        lab:'05 · Query',       nm:'Q3 — Spesa media mensile'},
+    {id:'q4',        lab:'05 · Query',       nm:'Q4 — Market basket (WOW)'},
+    {id:'q5',        lab:'05 · Query',       nm:'Q5 — Inattività & valore (WOW)'},
+    {id:'fine',      lab:'06 · Sintesi',     nm:'Conclusioni'},
+  ];
+
+  const DEFAULT_NOTES = {
+    hero: "Benvenuti. Presento il progetto d'esame di Analisi Dati & Big Data: un database RELAZIONALE per un negozio di elettronica.\n\n• Lo stesso dominio verrà poi mostrato su Neo4j (grafo) ed Elasticsearch.\n• Filo conduttore: da una richiesta reale del cliente a query che rispondono a domande di business.\n\nGuarda il pubblico, poi inizia a scorrere.",
+    scenario: "Il cliente ha i dati sparsi su fogli. Vuole sapere CHI COMPRA COSA e QUANTO VALE OGNI CLIENTE.\n\nPrima di scrivere codice traduco la richiesta in bisogni informativi:\n• Cosa memorizzare: clienti, prodotti (con categoria e fornitore), ordini con più righe.\n• Cosa deve rispondere: prodotti per cliente, spesa totale, spesa media mensile (+2 extra).",
+    perche: "Perché relazionale e non grafo/documentale?\n1. Dati strutturati e stabili → tabelle.\n2. Relazioni forti + integrità → foreign key (niente ordini orfani).\n3. Prezzo 'congelato' sulla riga d'ordine: se il listino cambia, gli ordini passati restano corretti.\n4. Le domande sono JOIN + GROUP BY: il pane quotidiano di SQL.\n\nGrafo: sovradimensionato qui. Documentale: l'integrità ordine→cliente sarebbe a carico dell'app.",
+    'modello-er': "Modello ER = progettazione CONCETTUALE, prima delle tabelle (notazione Chen–Elmasri del corso).\n• 5 entità: CLIENTE, ORDINE, PRODOTTO, CATEGORIA, FORNITORE.\n• 4 relazioni: effettua (1:N), contiene (M:N con quantità e prezzo_applicato), classifica (1:N), fornisce (1:N).\n• Doppia linea = partecipazione totale: ogni ordine ha un cliente, ogni prodotto categoria+fornitore.\n\nSottolinea che da QUI, col mapping, nasce lo schema relazionale del passo successivo. La M:N contiene → tabella righe_ordine.",
+    modello: "Passo di MAPPING: dallo schema ER alle 6 tabelle (3ª forma normale).\n• Ogni entità → una tabella.\n• Relazioni 1:N → foreign key (es. ordini.codice_cliente).\n• M:N contiene → tabella righe_ordine (PK composta + 2 FK) con quantità e prezzo_applicato.\n\nRicollega ogni tabella all'entità/relazione ER vista prima.",
+    q1: "Q1 — Prodotti acquistati da un cliente (richiesta dalla traccia).\nDIMOSTRA DAL VIVO: cambia cliente dal menu a tendina → il risultato si ricalcola.\nConcetto: catena di JOIN clienti→ordini→righe→prodotti→categorie, con DISTINCT.",
+    q2: "Q2 — Totale speso per cliente (richiesta dalla traccia).\nSUM(quantità × prezzo_applicato) + GROUP BY.\nMostra l'ordinamento crescente/decrescente: le barre danno il colpo d'occhio su chi vale di più.",
+    q3: "Q3 — Spesa media mensile per cliente, anno 2025 (richiesta dalla traccia).\nDue passaggi: prima il totale PER MESE (subquery con strftime), poi la AVG di quei totali.\nSpiega perché serve la subquery annidata.",
+    q4: "Q4 — Prodotti acquistati insieme / market basket (extra WOW).\nSelf-join sullo stesso ordine con p1 < p2 per evitare duplicati e coppie A-A.\nPERCHÉ WOW: base del cross-selling e dei 'spesso acquistati insieme'. Con più dati → motore di raccomandazione.",
+    q5: "Q5 — Inattività & valore per cliente (extra WOW).\nUltimo ordine + giorni di inattività + valore totale = mini analisi RFM.\nPERCHÉ WOW: in alto i clienti 'dormienti ma preziosi' → target ideali per una campagna di retention.",
+    fine: "Conclusioni:\n• Modello solido: 6 tabelle normalizzate, vincoli e foreign key.\n• Risposte reali: le 3 domande della traccia + 2 query extra di business.\n• Riproducibile: script SQL e Python versionati.\n\nRingrazia e apri alle domande. Ricorda il confronto in arrivo con grafo ed Elasticsearch.",
+  };
+
+  const STORAGE_KEY = 'presenterNotes:' + (location.pathname || 'presentazione');
+  const AUD_W = 1280; // larghezza logica di render per proiezione/anteprima
+
+  let notes = {};
+  let curId = SLIDES[0].id;
+  let audienceWin = null, audienceScreen = null;
+  let previewFrame = null, previewWin = null;
+  let saveTimer = null, timerStart = 0, timerBase = 0, timerRunning = false, clockTimer = null;
+  let suppressScrollSync = false;
+
+  /* ---------- persistenza note ---------- */
+  function loadNotes(){
+    notes = Object.assign({}, DEFAULT_NOTES);
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ const o = JSON.parse(raw); if(o && o.notes) Object.assign(notes, o.notes); }
+    }catch(e){}
+  }
+  function persist(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({file:location.pathname, updated:new Date().toISOString(), notes})); }catch(e){}
+  }
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{ persist(); flashSaved(); }, 500);
+  }
+  function flashSaved(){
+    const ind = document.getElementById('pv-saved');
+    if(!ind) return; ind.classList.add('show');
+    clearTimeout(flashSaved._t); flashSaved._t = setTimeout(()=>ind.classList.remove('show'), 1400);
+  }
+
+  /* ---------- clone della presentazione per proiezione/anteprima ---------- */
+  function audienceHTML(){
+    const clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[data-presenter-only]').forEach(e=>e.remove());
+    const head = clone.querySelector('head');
+    if(head) head.insertAdjacentHTML('afterbegin', '<script>window.__AUDIENCE__=true;<\/script>');
+    return '<!DOCTYPE html>\n' + clone.outerHTML;
+  }
+
+  /* ---------- costruzione console ---------- */
+  function buildConsole(){
+    const c = document.createElement('div');
+    c.id = 'pv-console';
+    c.setAttribute('data-presenter-only','');
+    c.innerHTML = `
+      <div class="pvc-top">
+        <div class="ttl"><span class="dot"></span>Modalità relatore</div>
+        <span class="pvc-status" id="pv-status"><span class="led"></span><span id="pv-status-tx">Proiezione attiva</span></span>
+        <span class="pvc-spacer"></span>
+        <span class="pvc-timer" id="pv-timer">00:00</span>
+        <button class="pvc-btn icon" id="pv-timer-toggle" title="Pausa / riprendi">⏸</button>
+        <button class="pvc-btn icon" id="pv-timer-reset" title="Azzera cronometro">↺</button>
+        <span class="pvc-clock" id="pv-clock">--:--</span>
+        <button class="pvc-btn" id="pv-reopen" style="display:none">↗ Riapri proiezione</button>
+        <button class="pvc-btn danger" id="pv-exit">✕ Esci</button>
+      </div>
+      <div class="pvc-body">
+        <div class="pvc-pane">
+          <div class="ph"><span class="grad-text">In proiezione</span> · ciò che vede il pubblico</div>
+          <div class="pvc-preview-wrap" id="pv-preview"></div>
+          <div class="pvc-nav">
+            <button class="pvc-btn" id="pv-prev">◀ Sezione prec.</button>
+            <button class="pvc-btn" id="pv-next">Sezione succ. ▶</button>
+            <span class="pos" id="pv-pos"></span>
+          </div>
+        </div>
+        <div class="pvc-pane">
+          <div class="ph">Note del relatore</div>
+          <div class="pvc-notes">
+            <div class="pvc-curslide">
+              <div class="lab" id="pv-cur-lab"></div>
+              <div class="nm" id="pv-cur-nm"></div>
+              <div class="pvc-next" id="pv-cur-next"></div>
+            </div>
+            <textarea id="pv-notes-edit" placeholder="Scrivi qui le note per questa sezione… (si salvano da sole)"></textarea>
+            <div class="pvc-notes-tools">
+              <select class="pvc-jump" id="pv-jump" title="Vai a una sezione"></select>
+              <button class="pvc-btn" id="pv-export">⬇ Esporta</button>
+              <button class="pvc-btn" id="pv-import">⬆ Importa</button>
+              <button class="pvc-btn" id="pv-reset" title="Ripristina la nota predefinita di questa sezione">↺ Ripristina</button>
+              <input type="file" id="pv-import-file" accept="application/json,.json" style="display:none">
+              <span class="pvc-save-ind" id="pv-saved">✓ Salvato</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pvc-hint">Scorri l'anteprima con la rotellina per muovere la proiezione · <kbd>←</kbd>/<kbd>→</kbd> o <kbd>PgUp</kbd>/<kbd>PgDn</kbd> per cambiare sezione · <kbd>Esc</kbd> per uscire.</div>`;
+    document.body.appendChild(c);
+
+    // popola select
+    const jump = c.querySelector('#pv-jump');
+    SLIDES.forEach((s,i)=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=(i+1)+'. '+s.nm; jump.appendChild(o); });
+
+    // wiring
+    c.querySelector('#pv-exit').addEventListener('click', exitPresenter);
+    c.querySelector('#pv-prev').addEventListener('click', ()=>step(-1));
+    c.querySelector('#pv-next').addEventListener('click', ()=>step(1));
+    c.querySelector('#pv-reopen').addEventListener('click', ()=>{ openAudience(); });
+    c.querySelector('#pv-timer-toggle').addEventListener('click', toggleTimer);
+    c.querySelector('#pv-timer-reset').addEventListener('click', resetTimer);
+    jump.addEventListener('change', e=>goToSlide(e.target.value,true));
+    c.querySelector('#pv-export').addEventListener('click', exportNotes);
+    c.querySelector('#pv-import').addEventListener('click', ()=>c.querySelector('#pv-import-file').click());
+    c.querySelector('#pv-import-file').addEventListener('change', importNotes);
+    c.querySelector('#pv-reset').addEventListener('click', resetCurrentNote);
+
+    const ta = c.querySelector('#pv-notes-edit');
+    ta.addEventListener('input', ()=>{ notes[curId] = ta.value; scheduleSave(); });
+
+    return c;
+  }
+
+  /* ---------- anteprima (iframe scalato, stessa larghezza della proiezione) ---------- */
+  function buildPreview(){
+    const wrap = document.getElementById('pv-preview');
+    wrap.innerHTML = '';
+    previewFrame = document.createElement('iframe');
+    wrap.appendChild(previewFrame);
+    const doc = previewFrame.contentDocument;
+    doc.open(); doc.write(audienceHTML()); doc.close();
+    previewWin = previewFrame.contentWindow;
+    // scroll istantaneo per rotella/sync (lo smooth di default bloccherebbe lo scrollTop programmatico)
+    previewWin.document.documentElement.style.scrollBehavior = 'auto';
+    sizePreview();
+    previewWin.addEventListener('scroll', onPreviewScroll, {passive:true});
+    attachPreviewWheel();
+    attachInteractionMirror();
+  }
+  /* Scroll con rotella: lo gestiamo noi perché l'iframe scalato (transform) non
+     sempre riceve lo scroll nativo. Muoviamo l'anteprima e la proiezione in modo
+     continuo/fluido, in aggiunta ai pulsanti Sezione prec./succ. */
+  function attachPreviewWheel(){
+    if(!previewWin) return;
+    const se = () => previewWin.document.scrollingElement;
+    const onWheel = (e)=>{
+      e.preventDefault();
+      let dy = e.deltaY;
+      if(e.deltaMode === 1) dy *= 16;                    // righe → px
+      else if(e.deltaMode === 2) dy *= previewWin.innerHeight; // pagine → px
+      const el = se();
+      const max = el.scrollHeight - el.clientHeight;
+      el.scrollTop = Math.max(0, Math.min(max, el.scrollTop + dy));
+      onPreviewScroll();
+    };
+    previewWin.addEventListener('wheel', onWheel, {passive:false});
+  }
+  function sizePreview(){
+    if(!previewFrame) return;
+    const wrap = document.getElementById('pv-preview');
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    const k = w / AUD_W;
+    previewFrame.style.width = AUD_W + 'px';
+    previewFrame.style.height = (h / k) + 'px';
+    previewFrame.style.transform = 'scale(' + k + ')';
+    previewFrame.style.transformOrigin = 'top left';
+  }
+
+  /* ---------- mirroring interazioni: anteprima → proiezione ---------- */
+  /* Le due finestre sono cloni identici e stesso-origine: individuo l'elemento
+     "gemello" nella proiezione e vi riapplico l'interazione fatta nell'anteprima. */
+  function cssEsc(s){ return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/[^\w-]/g,'\\$&'); }
+  function elLocator(el){
+    const parts=[]; let node=el;
+    while(node && node.nodeType===1){
+      if(node.id){ parts.unshift('#'+cssEsc(node.id)); break; }
+      const p=node.parentNode;
+      if(!p || p.nodeType!==1){ parts.unshift(node.tagName.toLowerCase()); break; }
+      const idx=Array.prototype.indexOf.call(p.children, node)+1;
+      parts.unshift(node.tagName.toLowerCase()+':nth-child('+idx+')');
+      node=p;
+    }
+    return parts.join(' > ');
+  }
+  function twinOf(el, doc){
+    if(!el || !doc) return null;
+    if(el.id){ const t=doc.getElementById(el.id); if(t) return t; }
+    try{ return doc.querySelector(elLocator(el)); }catch(e){ return null; }
+  }
+  function ensureFlashCSS(doc){
+    if(!doc || doc.getElementById('pv-flash-css')) return;
+    const st=doc.createElement('style'); st.id='pv-flash-css';
+    st.textContent='@keyframes pvFlash{0%{box-shadow:0 0 0 0 rgba(34,211,238,0)}12%{box-shadow:0 0 0 5px rgba(34,211,238,.55)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}.pv-flash{animation:pvFlash 1.15s ease-out;border-radius:14px}';
+    (doc.head||doc.documentElement).appendChild(st);
+  }
+  function flashUpdate(doc, ctrl){
+    if(!doc || !ctrl) return;
+    ensureFlashCSS(doc);
+    const card = ctrl.closest ? (ctrl.closest('.card') || ctrl.closest('section')) : null;
+    const region = card ? (card.querySelector('.result') || card.querySelector('[id$="-out"]')) : null;
+    const el = region || ctrl;
+    el.classList.remove('pv-flash'); void el.offsetWidth; el.classList.add('pv-flash');
+    setTimeout(()=>{ try{ el.classList.remove('pv-flash'); }catch(e){} }, 1250);
+  }
+  function attachInteractionMirror(){
+    if(!previewWin) return;
+    const pdoc = previewWin.document;
+    pdoc.addEventListener('change', e=>onMirror(e,'change'), true);
+    pdoc.addEventListener('click',  e=>onMirror(e,'click'),  true);
+  }
+  function onMirror(e, type){
+    const raw = e.target; if(!raw || raw.nodeType!==1) return;
+    let ctrl=null;
+    if(type==='change'){
+      const tg=raw.tagName;
+      if(tg==='SELECT'||tg==='INPUT'||tg==='TEXTAREA') ctrl=raw;
+    } else {
+      ctrl = (raw.tagName==='BUTTON') ? raw
+           : (raw.closest ? (raw.closest('button') || raw.closest('[role="button"]')) : null);
+    }
+    if(!ctrl) return;
+    flashUpdate(previewWin.document, ctrl);            // evidenzia anche nell'anteprima
+    if(!audienceWin || audienceWin.closed) return;
+    const adoc = audienceWin.document;
+    const twin = twinOf(ctrl, adoc); if(!twin) return;
+    if(type==='change'){
+      if(ctrl.type==='checkbox' || ctrl.type==='radio') twin.checked = ctrl.checked;
+      else twin.value = ctrl.value;
+      twin.dispatchEvent(new audienceWin.Event('change', {bubbles:true}));
+    } else {
+      twin.dispatchEvent(new audienceWin.MouseEvent('click', {bubbles:true, cancelable:true}));
+    }
+    flashUpdate(adoc, twin);                           // highlight sulla proiezione
+  }
+  /* riallinea lo stato completo dei controlli alla (ri)apertura della proiezione */
+  function syncAllToAudience(){
+    if(!previewWin || !audienceWin || audienceWin.closed) return;
+    const pdoc=previewWin.document, adoc=audienceWin.document;
+    pdoc.querySelectorAll('select, input, textarea').forEach(src=>{
+      const tw=twinOf(src, adoc); if(!tw) return;
+      if(src.type==='checkbox' || src.type==='radio'){
+        if(tw.checked!==src.checked){ tw.checked=src.checked; tw.dispatchEvent(new audienceWin.Event('change',{bubbles:true})); }
+      } else if(tw.value!==src.value){
+        tw.value=src.value; tw.dispatchEvent(new audienceWin.Event('change',{bubbles:true}));
+      }
+    });
+    pdoc.querySelectorAll('.seg').forEach(seg=>{
+      const on=seg.querySelector('button.on'); if(!on) return;
+      const tw=twinOf(on, adoc);
+      if(tw && !tw.classList.contains('on')) tw.dispatchEvent(new audienceWin.MouseEvent('click',{bubbles:true}));
+    });
+  }
+
+  /* ---------- sincronizzazione scroll anteprima → proiezione ---------- */
+  function onPreviewScroll(){
+    if(suppressScrollSync || !previewWin) return;
+    const d = previewWin.document.scrollingElement;
+    const denom = d.scrollHeight - d.clientHeight;
+    const frac = denom > 0 ? d.scrollTop / denom : 0;
+    if(audienceWin && !audienceWin.closed){
+      const ad = audienceWin.document.scrollingElement;
+      ad.scrollTop = frac * (ad.scrollHeight - ad.clientHeight);
+    }
+    detectCurrentFromPreview();
+  }
+  function detectCurrentFromPreview(){
+    if(!previewWin) return;
+    const y = previewWin.document.scrollingElement.scrollTop + previewWin.innerHeight * 0.35;
+    let cur = SLIDES[0].id;
+    for(const s of SLIDES){ const el = previewWin.document.getElementById(s.id); if(el && el.offsetTop <= y) cur = s.id; }
+    setCurrent(cur, false);
+  }
+
+  function step(dir){
+    const i = SLIDES.findIndex(s=>s.id===curId);
+    const j = Math.min(SLIDES.length-1, Math.max(0, i + dir));
+    goToSlide(SLIDES[j].id, true);
+  }
+  function goToSlide(id, scroll){
+    if(scroll){
+      // durante il salto sospendo il mirroring così anteprima e proiezione
+      // vanno ciascuna esattamente sulla propria sezione senza "litigare"
+      suppressScrollSync = true;
+      clearTimeout(goToSlide._t);
+      const pe = previewWin && previewWin.document.getElementById(id);
+      if(pe) previewWin.scrollTo({top: pe.offsetTop, behavior:'smooth'});
+      const ae = audienceWin && !audienceWin.closed && audienceWin.document.getElementById(id);
+      if(ae) audienceWin.scrollTo({top: ae.offsetTop, behavior:'smooth'});
+      goToSlide._t = setTimeout(()=>{ suppressScrollSync = false; }, 650);
+    }
+    setCurrent(id, true);
+  }
+
+  /* ---------- nota corrente ---------- */
+  function setCurrent(id, fromJump){
+    if(id === curId && !fromJump){ return; }
+    curId = id;
+    const i = SLIDES.findIndex(s=>s.id===id);
+    const s = SLIDES[i];
+    document.getElementById('pv-cur-lab').textContent = s.lab;
+    document.getElementById('pv-cur-nm').textContent  = s.nm;
+    const nx = SLIDES[i+1];
+    document.getElementById('pv-cur-next').innerHTML = nx ? ('Prossima: <b>'+nx.nm+'</b>') : 'Ultima sezione';
+    document.getElementById('pv-pos').textContent = (i+1) + ' / ' + SLIDES.length;
+    const jump = document.getElementById('pv-jump'); if(jump) jump.value = id;
+    const ta = document.getElementById('pv-notes-edit');
+    if(document.activeElement !== ta){ ta.value = notes[id] || ''; }
+    else { ta.value = notes[id] || ''; } // cambio sezione = ricarica comunque
+  }
+
+  /* ---------- import / export ---------- */
+  function exportNotes(){
+    const blob = new Blob([JSON.stringify({file:location.pathname, updated:new Date().toISOString(), notes}, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'note-relatore-relazionale.json';
+    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  }
+  function importNotes(e){
+    const f = e.target.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try{
+        const o = JSON.parse(rd.result);
+        const src = o && o.notes ? o.notes : o;
+        if(src && typeof src === 'object'){ Object.assign(notes, src); persist(); flashSaved();
+          const ta = document.getElementById('pv-notes-edit'); ta.value = notes[curId] || '';
+        } else alert('File non valido: manca l\'oggetto "notes".');
+      }catch(err){ alert('Impossibile leggere il file JSON.'); }
+      e.target.value = '';
+    };
+    rd.readAsText(f);
+  }
+  function resetCurrentNote(){
+    notes[curId] = DEFAULT_NOTES[curId] || '';
+    document.getElementById('pv-notes-edit').value = notes[curId];
+    persist(); flashSaved();
+  }
+
+  /* ---------- cronometro + orologio ---------- */
+  function fmt(ms){ const t=Math.floor(ms/1000); const m=String(Math.floor(t/60)).padStart(2,'0'); const s=String(t%60).padStart(2,'0'); return m+':'+s; }
+  function tick(){
+    if(timerRunning) document.getElementById('pv-timer').textContent = fmt(timerBase + (Date.now()-timerStart));
+    const now = new Date();
+    document.getElementById('pv-clock').textContent = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  }
+  function startTimer(){ timerStart=Date.now(); timerBase=0; timerRunning=true;
+    document.getElementById('pv-timer-toggle').textContent='⏸';
+    clearInterval(clockTimer); clockTimer=setInterval(tick,1000); tick(); }
+  function toggleTimer(){
+    const b=document.getElementById('pv-timer-toggle');
+    if(timerRunning){ timerBase += Date.now()-timerStart; timerRunning=false; b.textContent='▶'; }
+    else { timerStart=Date.now(); timerRunning=true; b.textContent='⏸'; }
+    tick();
+  }
+  function resetTimer(){ timerBase=0; timerStart=Date.now(); document.getElementById('pv-timer').textContent='00:00'; }
+
+  /* ---------- finestra di proiezione ---------- */
+  async function openAudience(){
+    audienceScreen = null;
+    try{
+      if('getScreenDetails' in window){
+        const sd = await window.getScreenDetails();
+        if(sd && sd.screens && sd.screens.length > 1){
+          audienceScreen = sd.screens.find(s=>!s.isPrimary && s!==sd.currentScreen)
+                        || sd.screens.find(s=>s!==sd.currentScreen) || null;
+        }
+      }
+    }catch(e){ audienceScreen = null; }
+
+    let features = 'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no';
+    if(audienceScreen){
+      features = 'left='+audienceScreen.availLeft+',top='+audienceScreen.availTop
+               +',width='+audienceScreen.availWidth+',height='+audienceScreen.availHeight
+               +',menubar=no,toolbar=no,location=no,status=no';
+    }
+    const win = window.open('', 'pv_audience', features);
+    if(!win){ alert('Il browser ha bloccato la finestra di proiezione. Consenti i popup per questa pagina e riprova.'); return; }
+    audienceWin = win;
+    win.document.open(); win.document.write(audienceHTML()); win.document.close();
+    win.document.documentElement.style.scrollBehavior = 'auto';
+    win.document.title = 'Proiezione — ' + document.title;
+    injectAudienceControls(win);
+    if(audienceScreen){
+      try{ win.document.documentElement.requestFullscreen({screen: audienceScreen}); }catch(e){}
+    }
+    win.addEventListener('beforeunload', ()=>{ if(audienceWin===win) audienceWin=null; });
+    updateStatus();
+    // riallinea alla sezione corrente e rispecchia lo stato attuale dei controlli
+    setTimeout(()=>goToSlide(curId, true), 300);
+    setTimeout(syncAllToAudience, 550);
+  }
+
+  function injectAudienceControls(win){
+    const d = win.document;
+    const bar = d.createElement('div');
+    bar.setAttribute('style','position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:99999;'
+      +'display:flex;gap:12px;align-items:center;padding:10px 16px;border-radius:999px;'
+      +'background:rgba(9,13,28,.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);'
+      +'font-family:system-ui,Segoe UI,sans-serif;color:#e9edf7;font-size:14px;box-shadow:0 12px 34px -10px rgba(0,0,0,.7)');
+    const hint = d.createElement('span');
+    hint.textContent = audienceScreen ? 'Finestra di proiezione' : 'Trascina questa finestra sul proiettore, poi:';
+    hint.setAttribute('style','color:#98a2c0');
+    const btn = d.createElement('button');
+    btn.textContent = '⛶ Schermo intero';
+    btn.setAttribute('style','font:inherit;font-weight:700;color:#0b1020;background:linear-gradient(120deg,#22d3ee,#a855f7);'
+      +'border:0;border-radius:999px;padding:8px 15px;cursor:pointer');
+    btn.addEventListener('click', ()=>{
+      const el = d.documentElement;
+      try{ audienceScreen ? el.requestFullscreen({screen:audienceScreen}) : el.requestFullscreen(); }catch(e){ try{ el.requestFullscreen(); }catch(_){} }
+    });
+    bar.appendChild(hint); bar.appendChild(btn);
+    d.body.appendChild(bar);
+    d.addEventListener('fullscreenchange', ()=>{ bar.style.display = d.fullscreenElement ? 'none' : 'flex'; });
+  }
+
+  function updateStatus(){
+    const st = document.getElementById('pv-status');
+    const tx = document.getElementById('pv-status-tx');
+    const re = document.getElementById('pv-reopen');
+    const live = audienceWin && !audienceWin.closed;
+    st.classList.toggle('off', !live);
+    tx.textContent = live ? 'Proiezione attiva' : 'Proiezione chiusa';
+    re.style.display = live ? 'none' : '';
+  }
+
+  /* ---------- entra / esci ---------- */
+  let consoleEl = null, keyHandler = null, resizeHandler = null, statusPoll = null;
+
+  async function enterPresenter(){
+    loadNotes();
+    if(!consoleEl) consoleEl = buildConsole();
+    consoleEl.classList.add('on');
+    document.documentElement.style.overflow = 'hidden';
+    buildPreview();
+    setCurrent(SLIDES[0].id, true);
+    startTimer();
+    await openAudience();
+    detectCurrentFromPreview();
+
+    keyHandler = (e)=>{
+      if(document.activeElement === document.getElementById('pv-notes-edit')){ if(e.key==='Escape') document.getElementById('pv-notes-edit').blur(); return; }
+      if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); step(1); }
+      else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); step(-1); }
+      else if(e.key==='Escape'){ e.preventDefault(); exitPresenter(); }
+    };
+    resizeHandler = ()=>sizePreview();
+    window.addEventListener('keydown', keyHandler);
+    window.addEventListener('resize', resizeHandler);
+    statusPoll = setInterval(updateStatus, 1500);
+  }
+
+  function exitPresenter(){
+    if(consoleEl) consoleEl.classList.remove('on');
+    document.documentElement.style.overflow = '';
+    window.removeEventListener('keydown', keyHandler);
+    window.removeEventListener('resize', resizeHandler);
+    clearInterval(statusPoll); clearInterval(clockTimer); timerRunning=false;
+    try{ if(audienceWin && !audienceWin.closed) audienceWin.close(); }catch(e){}
+    audienceWin = null;
+    if(previewFrame){ previewFrame.remove(); previewFrame=null; previewWin=null; }
+  }
+
+  /* ---------- pulsante di avvio ---------- */
+  function addLaunch(){
+    const b = document.createElement('button');
+    b.id = 'pv-launch';
+    b.setAttribute('data-presenter-only','');
+    b.innerHTML = '▶ Modalità presentazione';
+    b.addEventListener('click', enterPresenter);
+    document.body.appendChild(b);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addLaunch);
+  else addLaunch();
+
+})(); }
 </script>
 </body>
 </html>

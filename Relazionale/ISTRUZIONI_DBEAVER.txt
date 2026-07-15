@@ -1,26 +1,19 @@
 ============================================================
- ISTRUZIONI - DB RELAZIONALE su DBeaver (SQLite)
- Negozio di elettronica
+ ISTRUZIONI - DB RELAZIONALE x ElettroStore
 ============================================================
-
-IMPORTANTE: usa una connessione di tipo SQLite. Il database usa
-funzioni specifiche di SQLite (strftime, PRAGMA foreign_keys),
-quindi NON funziona con connessioni MySQL/PostgreSQL.
 
 I file di riferimento sono in questa cartella 'Relazionale':
   01_schema.sql   -> crea le tabelle
   02_insert.sql   -> inserisce i dati di esempio
   03_queries.sql  -> le query della traccia (+ query aggiuntive)
   negozio.db      -> database gia' creato e popolato
-  query_negozio.py-> stesse query da Python
-  presentazione.html -> presentazione del progetto (apribile nel browser)
+  query_negozio.py-> query da Python
+  presentazione.html -> presentazione del progetto
 
 
 ############################################################
- STRADA A - Costruire il database da zero (CONSIGLIATA)
+ STRADA A - Costruire il database da zero
 ############################################################
- Mostra all'esame l'intero processo: creazione, popolamento,
- interrogazione.
 
 1) Apri DBeaver.
 
@@ -32,8 +25,7 @@ I file di riferimento sono in questa cartella 'Relazionale':
 
 3) Indica il file del database:
    - nel campo "Path" clicca "Open ..." / "Create"
-   - scegli una cartella e dai un nome al file, es.
-        negozio_dbeaver.db
+   - scegli una cartella e dai un nome al file
      (se il file non esiste, DBeaver lo crea)
    - clicca "Finish".
 
@@ -67,7 +59,6 @@ I file di riferimento sono in questa cartella 'Relazionale':
 ############################################################
  STRADA B - Aprire direttamente il database gia' pronto
 ############################################################
- Piu' rapido: usa il file negozio.db gia' creato e popolato.
 
 1) Apri DBeaver.
 
@@ -89,8 +80,6 @@ I file di riferimento sono in questa cartella 'Relazionale':
 ############################################################
  STRADA C - Eseguire le query da Python
 ############################################################
- Non richiede DBeaver ne' librerie esterne: il modulo sqlite3
- e' incluso in Python 3.
 
 1) Assicurati di avere Python 3 installato:
         python --version
@@ -103,24 +92,3 @@ I file di riferimento sono in questa cartella 'Relazionale':
         python query_negozio.py --crea
 
 3) Le query vengono eseguite e stampate a video una dopo l'altra.
-
-
-############################################################
- NOTE UTILI
-############################################################
-- Esecuzione: Ctrl+Invio = esegue la singola istruzione dove
-  si trova il cursore; Alt+X = esegue l'intero script.
-- Chiavi esterne: per attivare il controllo delle foreign key
-  in SQLite, lo script 01_schema.sql contiene gia'
-  "PRAGMA foreign_keys = ON;".
-- Le query della traccia usano come esempio il cliente con
-  codice 1 (Marco Rossi) e l'anno 2025: puoi cambiare questi
-  valori direttamente nel testo SQL.
-- Oltre alle 3 query richieste dalla traccia, il progetto include
-  alcune query aggiuntive (es. prodotti acquistati insieme,
-  inattivita' e valore per cliente): vedi 03_queries.sql e
-  query_negozio.py.
-- Risultati attesi (con i dati di esempio):
-    Query 1 -> prodotti acquistati dal cliente 1
-    Query 2 -> totale speso per ciascun cliente (in ordine decrescente)
-    Query 3 -> spesa media mensile 2025 per cliente

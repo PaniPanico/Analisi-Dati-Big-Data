@@ -1,22 +1,3 @@
-"""
-============================================================
- DB NoSQL DOCUMENTALE (Elasticsearch) - Tema: One Piece
- Script Python: crea l'indice, carica i dati ed esegue le query.
-============================================================
-
-Prerequisiti:
-  - Elasticsearch in esecuzione su http://localhost:9200
-    (vedi ISTRUZIONI_ELASTIC.txt - si avvia con docker compose)
-  - pip install elasticsearch
-
-Esecuzione:
-    python query_onepiece.py            # esegue le query
-    python query_onepiece.py --carica   # (ri)crea indice e dati
-
-NB: per usare i tasti --carica e' necessario il file bulk.ndjson
-    nella stessa cartella.
-"""
-
 import json
 import os
 import sys
@@ -51,7 +32,6 @@ def carica_dati():
     azioni = []
     with open(os.path.join(base, "bulk.ndjson"), "r", encoding="utf-8") as f:
         righe = [r for r in f if r.strip()]
-    # le righe sono a coppie: { "index": {...} } seguita dal documento
     for i in range(0, len(righe), 2):
         meta = json.loads(righe[i])["index"]
         doc = json.loads(righe[i + 1])
@@ -113,7 +93,7 @@ def main():
 
     # ----------------------------------------------------------
     # 2) FILTRO: membri della ciurma di Cappello di Paglia
-    #    (nel dataset reale: 'Straw Hat Pirates')
+    #    (nel dataset: 'Straw Hat Pirates')
     # ----------------------------------------------------------
     res = es.search(
         index=INDEX,
@@ -140,19 +120,42 @@ def main():
     res = es.search(
         index=INDEX,
         size=0,
-        aggs={
-            "per_ciurma": {
-                "terms": {"field": "crew", "size": 20},
-                "aggs": {"taglia_media": {"avg": {"field": "bounty"}}},
+        query={
+            "bool": {
+                "filter": [
+                    {"exists": {"field": "bounty"}}
+                ],
+                "must_not": [
+                    {"terms": {"crew": [" ", ""]}}
+                ]
             }
         },
+        aggs={
+            "per_ciurma": {
+                "terms": {
+                    "field": "crew",
+                    "size": 12,
+                    "order": {"taglia_media": "desc"},
+                    "min_doc_count": 3
+                },
+                "aggs": {
+                    "taglia_media": {
+                        "avg": {
+                            "field": "bounty",
+                            "format": "0.00"
+                        }
+                    }
+                }
+            }
+        }
     )
     print("=" * 60)
     print("4) Aggregazione: taglia media per ciurma")
     print("-" * 60)
     for b in res["aggregations"]["per_ciurma"]["buckets"]:
-        media = b["taglia_media"]["value"] or 0
-        print(f"  - {b['key']}: {b['doc_count']} membri | media {media:,.0f} berry")
+        # Elasticsearch restituisce 'value_as_string' per via di "format": "0.00"
+        media = b["taglia_media"].get("value_as_string", str(b["taglia_media"]["value"]))
+        print(f"  - {b['key']}: {b['doc_count']} membri | media {media} berry")
     print()
 
 

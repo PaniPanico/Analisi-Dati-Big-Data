@@ -1,21 +1,3 @@
-"""
-============================================================
- DB RELAZIONALE - Negozio di elettronica
- Script Python che si connette al database SQLite ed esegue
- le query richieste dalla traccia.
-============================================================
-
-Prerequisiti:
-  - Python 3
-  - Il file 'negozio.db' deve essere presente nella stessa
-    cartella. Se non c'e', lo si puo' rigenerare con:
-        python query_negozio.py --crea
-    (lo script ricostruira' il DB a partire dai file .sql).
-
-Esecuzione:
-    python query_negozio.py
-"""
-
 import os
 import sqlite3
 import sys
@@ -47,7 +29,6 @@ def stampa_risultato(titolo, descrizione, righe):
 
 
 def main():
-    # Se richiesto (o se il DB non esiste) lo si ricostruisce
     if "--crea" in sys.argv or not os.path.exists(DB_PATH):
         crea_database()
 
@@ -55,9 +36,7 @@ def main():
     conn.execute("PRAGMA foreign_keys = ON")
     cur = conn.cursor()
 
-    # ----------------------------------------------------------
     # QUERY 1 - Prodotti acquistati da un determinato cliente
-    # ----------------------------------------------------------
     codice_cliente = 1  # Marco Rossi
     cur.execute(
         """
@@ -78,9 +57,7 @@ def main():
         cur.fetchall(),
     )
 
-    # ----------------------------------------------------------
     # QUERY 2 - Totale speso da ciascun cliente
-    # ----------------------------------------------------------
     cur.execute(
         """
         SELECT c.codice_cliente, c.nome, c.cognome,
@@ -98,9 +75,7 @@ def main():
         cur.fetchall(),
     )
 
-    # ----------------------------------------------------------
     # QUERY 3 - Spesa media mensile per cliente (anno 2025)
-    # ----------------------------------------------------------
     anno = "2025"
     cur.execute(
         """
@@ -126,10 +101,8 @@ def main():
         "(codice, nome, cognome, spesa media mensile in euro)",
         cur.fetchall(),
     )
-
-    # ----------------------------------------------------------
+    
     # QUERY 4 - Coppie di prodotti acquistati piu' spesso insieme
-    # ----------------------------------------------------------
     cur.execute(
         """
         SELECT p1.nome AS prodotto_A,
@@ -151,9 +124,7 @@ def main():
         cur.fetchall(),
     )
 
-    # ----------------------------------------------------------
     # QUERY 5 - Ultimo ordine, giorni di inattivita' e valore cliente
-    # ----------------------------------------------------------
     cur.execute(
         """
         SELECT c.nome || ' ' || c.cognome AS cliente,

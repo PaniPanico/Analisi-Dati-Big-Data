@@ -11,7 +11,7 @@ Campi:
   - devil_fruit  (keyword) frutto del diavolo (vuoto se il personaggio ne è sprovvisto)
   - role         (keyword) ruolo nella ciurma
   - status       (keyword) stato (Alive / Deceased / Unknown)
-  - description  (text)    descrizione testuale (full-text search)
+  - description  (text)    descrizione testuale
 
 ------------------------------------------------------------
 Comando per creare l'indice:

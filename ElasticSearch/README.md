@@ -1,20 +1,18 @@
 # One Piece — DB Documentale (Elasticsearch)
 
-Progetto d'esame *Analisi Dati e Big Data* (traccia libera): un database **NoSQL
-documentale** su **Elasticsearch** in cui ogni personaggio di *One Piece* è un
-documento JSON autonomo — nessuna tabella, nessun join. Il modello valorizza la
-**ricerca full-text** sulle descrizioni e le **aggregazioni** sulle taglie.
+Un database **NoSQL documentale** su **Elasticsearch** in cui ogni personaggio di *One Piece* è un
+documento JSON autonomo. Il modello valorizza la **ricerca full-text** sulle descrizioni e le **aggregazioni** sulle taglie.
 
 ## File del progetto
 
 | File | Contenuto |
 |------|-----------|
-| `docker-compose.yaml` | Avvia Elasticsearch 8.13 (+ Kibana) con CORS abilitato. |
+| `docker-compose.yaml` | Avvia Elasticsearch 8.13 + Kibana. |
 | `01_index.txt` | Descrizione del mapping e comando `curl` per creare l'indice. |
 | `bulk.ndjson` | Dataset: ~1500 personaggi in formato Bulk API. |
 | `query_onepiece.py` | Script Python: crea l'indice, carica i dati ed esegue le query. |
-| `presentazione_elasticsearch.html` | Presentazione interattiva (query dal vivo). |
-| `ISTRUZIONI_ELASTIC.txt` | Guida passo-passo (Docker, Python, curl, Kibana). |
+| `presentazione_elasticsearch.html` | Presentazione del progetto. |
+| `ISTRUZIONI_ELASTIC.txt` | Guida passo-passo. |
 
 ## Il modello dati
 
@@ -22,14 +20,14 @@ Indice `one_piece`, un documento per personaggio:
 
 | Campo | Tipo ES | Descrizione |
 |-------|---------|-------------|
-| `name` | `text` | nome del personaggio (analizzato per full-text) |
+| `name` | `text` | nome del personaggio |
 | `crew` | `keyword` | ciurma / organizzazione di appartenenza |
 | `origin` | `keyword` | mare / luogo di origine |
 | `bounty` | `long` | taglia in berry |
-| `devil_fruit` | `keyword` | frutto del diavolo (vuoto se assente) |
+| `devil_fruit` | `keyword` | frutto del diavolo (se presente) |
 | `role` | `keyword` | ruolo nella ciurma |
 | `status` | `keyword` | Alive / Deceased / Unknown |
-| `description` | `text` | descrizione testuale (full-text search) |
+| `description` | `text` | descrizione testuale |
 
 La distinzione **`text` vs `keyword`** è il cuore del modello: i campi `text`
 (`name`, `description`) vengono analizzati e sono adatti alla ricerca full-text;
@@ -38,11 +36,9 @@ ordinamenti e aggregazioni.
 
 ## Le query
 
-`query_onepiece.py` mostra i quattro pattern tipici di Elasticsearch:
-
 1. **Full-text search** — `multi_match` su `name` e `description` con
-   `fuzziness: AUTO` (tollera errori di battitura), peso maggiore sul nome
-   (`name^3`) ed `highlight` dei termini che hanno fatto match.
+   `fuzziness: AUTO` (tolleranza agli errori di battitura), peso personalizzabile
+   (es. `name^3`) ed `highlight` dei termini che hanno fatto match.
 2. **Filtro esatto** — `term` sul campo `crew` (es. i membri della ciurma di
    Cappello di Paglia), ordinati per taglia.
 3. **Range** — `range` sul campo `bounty` (es. taglia superiore a 1 miliardo).
@@ -54,7 +50,7 @@ ordinamenti e aggregazioni.
 Vedi `ISTRUZIONI_ELASTIC.txt` per i dettagli. In sintesi:
 
 ```bash
-docker compose up -d              # avvia Elasticsearch (+ Kibana)
+docker compose up -d              # avvia Elasticsearch + Kibana
 pip install elasticsearch
 python query_onepiece.py --carica # crea l'indice 'one_piece' e carica i documenti
 python query_onepiece.py          # esegue e stampa le query

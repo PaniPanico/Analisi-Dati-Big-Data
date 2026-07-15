@@ -254,7 +254,7 @@ footer b{color:var(--gold-soft)}
        ricerca full-text, filtri, range e aggregazioni — tutto interattivo e in tempo reale.</p>
     <div class="tags">
       <span>NoSQL documentale</span><span>Full-text search</span>
-      <span>Aggregazioni</span><span>REST / JSON</span>
+      <span>Filtri</span><span>Aggregazioni</span>
     </div>
     <div class="hero-stats">
       <div class="st"><div class="num" id="stat-docs">—</div><div class="lab">Personaggi indicizzati</div></div>
@@ -273,17 +273,26 @@ footer b{color:var(--gold-soft)}
     <div class="reveal">
       <span class="eyebrow">Il modello dei dati</span>
       <h2 class="big">Cos'è Elasticsearch?</h2>
-      <p class="lead">Elasticsearch è un database <b>NoSQL documentale</b> orientato alla ricerca.
-        Non ci sono tabelle né join: ogni personaggio è un <b>documento JSON autonomo</b>.
-        La sua forza è la ricerca full-text sul testo e le aggregazioni sui dati numerici.</p>
+      <p class="lead">Elasticsearch è un potente motore di ricerca e analisi distribuito, strutturato come un database <b>NoSQL documentale</b>.
+        A differenza dei classici database relazionali, abbandona il concetto di tabelle, righe e complesse operazioni di join:
+        ogni entità del dominio viene memorizzata come un documento JSON autonomo e flessibile.
+        Il vero punto di forza di questa tecnologia risiede nella sua capacità di combinare <b>ricerche testuali</b> avanzate, 
+        <b>filtraggio</b> granulare ad altissime prestazioni e un sistema di <b>aggregazione</b> analitica in tempo reale</p>
     </div>
     <div class="grid c3 reveal" style="margin-top:26px">
-      <div class="card"><div class="ic">📄</div><h3>Documenti, non righe</h3>
-        <p>Ogni personaggio = un documento JSON con i suoi campi. Nessuno schema rigido, nessun join.</p></div>
-      <div class="card"><div class="ic">🔎</div><h3>Ricerca full-text</h3>
-        <p>I campi <code>text</code> vengono <i>analizzati</i> (spezzati in termini): puoi cercare parole nel testo, con punteggio di rilevanza.</p></div>
+      <div class="card"><div class="ic">🔎</div><h3>Ricerca Full-text</h3>
+        <p>I campi testuali non si limitano ad essere archiviati, ma vengono sottoposti a un processo di analisi (tokenizzazione, normalizzazione, stemming). 
+          Questo permette di effettuare ricerche libere e complesse all'interno di grandi moli di testo. 
+          Elasticsearch ordina i risultati in base a un punteggio di rilevanza (scoring), premiando i documenti che meglio rispondono all'intento della query.</p></div>
+      <div class="card"><div class="ic">🎯</div><h3>Filtraggio</h3>
+        <p>Elasticsearch offre un potentissimo sistema di filtri. È possibile restringere l'insieme dei risultati applicando condizioni esatte e binarie su qualsiasi campo.
+          Queste operazioni sono ottimizzate per essere estremamente veloci e i loro risultati vengono spesso salvati in cache per azzerare i tempi di caricamento nelle richieste successive.
+        </p></div>
       <div class="card"><div class="ic">📊</div><h3>Aggregazioni</h3>
-        <p>Raggruppa e calcola al volo: es. la taglia media per ciurma, senza estrarre i dati.</p></div>
+        <p>Le aggregazioni trasformano Elasticsearch in uno strumento di Business Intelligence in grado di riassumere e analizzare i dati al volo, senza doverli scaricare.
+          Questa funzionalità, oltre ai calcoli matematici sui dati numerici, si estende a tutto il set di dati.
+          È possibile creare "bucket" dinamici per raggruppare i documenti per categorie, analizzare distribuzioni testuali ed estrarre pattern complessi direttamente dal database.
+        </p></div>
     </div>
     <div class="card reveal" style="margin-top:22px">
       <h3>Un documento di esempio</h3>
@@ -299,7 +308,7 @@ footer b{color:var(--gold-soft)}
       <span class="eyebrow">Passo 1 · Struttura</span>
       <h2 class="big">L'indice e il mapping</h2>
       <p class="lead">Il <b>mapping</b> dichiara il tipo di ogni campo. È la scelta più importante:
-        determina <i>come</i> potrai interrogare quel campo. Passa il mouse sulle righe.</p>
+        determina <i>come</i> potrai interrogare quel campo.</p>
     </div>
     <div class="reveal" style="margin-top:22px;overflow-x:auto">
       <table class="map">
@@ -315,11 +324,6 @@ footer b{color:var(--gold-soft)}
           <tr><td><code>description</code></td><td><span class="badge text">text</span></td><td>Descrizione libera — il cuore della ricerca full-text</td></tr>
         </tbody>
       </table>
-      <div class="legend-mini">
-        <span><span class="badge text">text</span> analizzato → si usa con <code>match</code> / <code>multi_match</code></span>
-        <span><span class="badge keyword">keyword</span> esatto → si usa con <code>term</code> e nelle aggregazioni</span>
-        <span><span class="badge long">long</span> numerico → si usa con <code>range</code> e <code>avg/max</code></span>
-      </div>
     </div>
   </div>
 </section>
@@ -330,12 +334,11 @@ footer b{color:var(--gold-soft)}
     <div class="reveal">
       <span class="eyebrow">Passo 2 · Popolamento</span>
       <h2 class="big">Come sono stati caricati i dati</h2>
-      <p class="lead">Quattro passaggi, dall'avvio del motore all'indice pronto per le query.</p>
     </div>
     <div class="timeline reveal" style="margin-top:30px">
-      <div class="tstep"><div class="n">1</div><h4>Docker</h4><p><code>docker compose up -d</code> avvia Elasticsearch (e Kibana).</p></div>
+      <div class="tstep"><div class="n">1</div><h4>Docker</h4><p><code>docker compose up -d</code> avvia Elasticsearch e Kibana.</p></div>
       <div class="tstep"><div class="n">2</div><h4>Indice</h4><p>Creazione di <code>one_piece</code> con il mapping degli 8 campi.</p></div>
-      <div class="tstep"><div class="n">3</div><h4>Bulk</h4><p>Caricamento di ~1548 documenti con la <i>Bulk API</i> da <code>bulk.ndjson</code>.</p></div>
+      <div class="tstep"><div class="n">3</div><h4>Bulk</h4><p>Caricamento di 1548 documenti con la <i>Bulk API</i> da <code>bulk.ndjson</code>.</p></div>
       <div class="tstep"><div class="n">4</div><h4>Refresh</h4><p>L'indice viene aggiornato: i documenti diventano ricercabili.</p></div>
     </div>
   </div>
@@ -344,15 +347,15 @@ footer b{color:var(--gold-soft)}
 <!-- ========== QUERY 1 ========== -->
 <section id="q1">
   <div class="wrap reveal">
-    <span class="eyebrow">Query interattiva</span>
-    <h2 class="big">1 · Full-text search <span style="font-size:.5em;color:var(--ink-soft)">multi_match fuzzy</span></h2>
+    <h2 class="big">1 · Full-text search</h2>
     <p class="lead">Cerca un testo su più campi contemporaneamente. Scegli <b>quali campi</b> interrogare
-      e con quale <b>peso (boost 1–5)</b>: più alto il peso, più quel campo conta nel punteggio.</p>
+      e con quale <b>peso (boost compreso tra 1 e 5)</b>: più alto il peso, più quel campo conta nel punteggio.</p>
     <div class="query">
-      <div class="qhead"><div class="qn">1</div><h3>multi_match · full-text pesata + fuzzy</h3><span class="qtag">match / relevance</span></div>
+      <div class="qhead"><div class="qn">1</div><h3>multi_match + boost + fuzziness</h3></div>
       <div class="qbody">
         <div class="qcontrols">
-          <p class="qexplain">💡 <b>Concetto:</b> <code>multi_match</code> cerca lo stesso testo su più campi. <code>^n</code> è il <i>boost</i>: alza il peso di un campo. <code>fuzziness:"AUTO"</code> tollera i refusi (es. <i>Zorro</i> → <i>Zoro</i>).</p>
+          <p class="qexplain"><b><code>multi_match</code></b> cerca lo stesso testo su più campi.<br><b><code>^n</code></b> è il <i>boost</i>: alza il peso di un campo. <br>
+            <b><code>fuzziness:"AUTO"</code></b> tolleranza ai refusi.</p>
           <div class="ctl">
             <label for="q1-text">Testo da cercare</label>
             <input type="text" id="q1-text" value="Zorro swordsman" placeholder="es. Zorro swordsman">
@@ -360,7 +363,6 @@ footer b{color:var(--gold-soft)}
           <div class="ctl">
             <label>Campi da interrogare + peso (boost 1–5)</label>
             <div id="q1-fields"></div>
-            <p class="small">Solo i campi selezionati entrano nell'array <code>fields</code>. <code>bounty</code> è escluso: è numerico.</p>
           </div>
           <div class="ctl">
             <label class="toggle"><input type="checkbox" id="q1-fuzzy" class="chk" checked> Fuzziness AUTO (tollera refusi)</label>
@@ -369,7 +371,7 @@ footer b{color:var(--gold-soft)}
             <label for="q1-size">Numero di risultati</label>
             <input type="number" id="q1-size" value="5" min="1" max="50" style="width:120px">
           </div>
-          <button class="runbtn" onclick="runQ1()">▶ Esegui query</button>
+          <button class="runbtn" onclick="runQ1(event)">▶ Esegui query</button>
         </div>
         <div class="qcode">
           <span class="lbl">Query generata · POST /one_piece/_search</span>
@@ -384,15 +386,15 @@ footer b{color:var(--gold-soft)}
 <!-- ========== QUERY 2 ========== -->
 <section id="q2">
   <div class="wrap reveal">
-    <span class="eyebrow">Query interattiva</span>
-    <h2 class="big">2 · Filtro esatto <span style="font-size:.5em;color:var(--ink-soft)">term su keyword</span></h2>
+    <span class="eyebrow">Query</span>
+    <h2 class="big">2 · Filtro esatto</h2>
     <p class="lead">Filtra i personaggi per <b>ciurma</b>. Scegli una qualsiasi delle ciurme presenti
-      nel dataset dal menu a tendina (caricato in tempo reale da Elasticsearch).</p>
+      nel dataset dal menu a tendina.</p>
     <div class="query">
-      <div class="qhead"><div class="qn">2</div><h3>term · membri di una ciurma</h3><span class="qtag">keyword / filter</span></div>
+      <div class="qhead"><div class="qn">2</div><h3>term (membri di una ciurma/organizzazione)</h3></div>
       <div class="qbody">
         <div class="qcontrols">
-          <p class="qexplain">💡 <b>Concetto:</b> <code>term</code> cerca il <i>valore esatto</i> su un campo <code>keyword</code> (non analizzato). Perfetto per i filtri categorici come la ciurma.</p>
+          <p class="qexplain"><b><code>term</code></b> cerca il <i>valore esatto</i> su un campo <code>keyword</code>.</p>
           <div class="ctl">
             <label for="q2-crew">Ciurma (crew)</label>
             <select id="q2-crew"><option>Caricamento ciurme…</option></select>
@@ -409,7 +411,7 @@ footer b{color:var(--gold-soft)}
               <button data-v="asc">Taglia ↑</button>
             </div>
           </div>
-          <button class="runbtn" onclick="runQ2()">▶ Esegui query</button>
+          <button class="runbtn" onclick="runQ2(event)">▶ Esegui query</button>
         </div>
         <div class="qcode">
           <span class="lbl">Query generata · POST /one_piece/_search</span>
@@ -424,15 +426,15 @@ footer b{color:var(--gold-soft)}
 <!-- ========== QUERY 3 ========== -->
 <section id="q3">
   <div class="wrap reveal">
-    <span class="eyebrow">Query interattiva</span>
-    <h2 class="big">3 · Range <span style="font-size:.5em;color:var(--ink-soft)">taglia (bounty)</span></h2>
-    <p class="lead">Trova i personaggi con una taglia in un <b>intervallo a tua scelta</b>.
+    <span class="eyebrow">Query</span>
+    <h2 class="big">3 · Range</h2>
+    <p class="lead">Trova i personaggi con una taglia in un intervallo a tua scelta.
       Imposta il minimo e il massimo: la query usa <code>gte</code>/<code>lte</code>.</p>
     <div class="query">
-      <div class="qhead"><div class="qn">3</div><h3>range · taglia tra min e max</h3><span class="qtag">numeric / range</span></div>
+      <div class="qhead"><div class="qn">3</div><h3>range (taglia tra min e max)</h3></div>
       <div class="qbody">
         <div class="qcontrols">
-          <p class="qexplain">💡 <b>Concetto:</b> <code>range</code> filtra i campi numerici. <code>gte</code> = maggiore o uguale, <code>lte</code> = minore o uguale. Lascia vuoto un estremo per lasciarlo aperto.</p>
+          <p class="qexplain"><b><code>range</code></b> filtra i campi numerici. <code>gte</code> = maggiore o uguale, <code>lte</code> = minore o uguale. Lascia vuoto un estremo per tenerlo aperto.</p>
           <div class="ctl">
             <label>Intervallo taglia (berry)</label>
             <div class="rangewrap">
@@ -465,7 +467,7 @@ footer b{color:var(--gold-soft)}
               <button data-v="asc">Taglia ↑</button>
             </div>
           </div>
-          <button class="runbtn" onclick="runQ3()">▶ Esegui query</button>
+          <button class="runbtn" onclick="runQ3(event)">▶ Esegui query</button>
         </div>
         <div class="qcode">
           <span class="lbl">Query generata · POST /one_piece/_search</span>
@@ -480,18 +482,24 @@ footer b{color:var(--gold-soft)}
 <!-- ========== QUERY 4 ========== -->
 <section id="q4">
   <div class="wrap reveal">
-    <span class="eyebrow">Query interattiva</span>
-    <h2 class="big">4 · Aggregazione <span style="font-size:.5em;color:var(--ink-soft)">taglia media per ciurma</span></h2>
+    <span class="eyebrow">Query</span>
+    <h2 class="big">4 · Aggregazione</h2>
     <p class="lead">Raggruppa i personaggi per ciurma e calcola la <b>taglia media</b> di ciascuna.
       Scegli quante ciurme mostrare e come <b>ordinarle</b>.</p>
     <div class="query">
-      <div class="qhead"><div class="qn">4</div><h3>terms + avg · taglia media per ciurma</h3><span class="qtag">aggregation</span></div>
+      <div class="qhead"><div class="qn">4</div><h3>terms + avg (taglia media per ciurma)</div>
       <div class="qbody">
         <div class="qcontrols">
-          <p class="qexplain">💡 <b>Concetto:</b> l'aggregazione <code>terms</code> crea un “bucket” per ogni ciurma; dentro, <code>avg</code> calcola la taglia media. <code>size:0</code> = non servono documenti, solo i numeri. Il filtro <code>exists:bounty</code> considera solo i personaggi con taglia nota.</p>
+          <p class="qexplain">L'aggregazione <b><code>terms</code></b> crea un “bucket” per ogni ciurma; dentro, <b><code>avg</code></b> calcola la taglia media. 
+            <code>size:0</code> = comunica che non servono documenti bensì solo i numeri. Il filtro <code>exists:bounty</code> considera solo i personaggi con taglia nota, 
+            mentre <code>must_not: terms crew [" ",""]</code> scarta le ciurme “vuote”. La media è arrotondata a 2 decimali(<code>"format": "0.00"</code>).</p>
           <div class="ctl">
             <label for="q4-size">Numero di ciurme (bucket)</label>
             <input type="number" id="q4-size" value="12" min="1" max="40" style="width:120px">
+          </div>
+          <div class="ctl">
+            <label for="q4-mindoc">Numero minimo di membri</label>
+            <input type="number" id="q4-mindoc" value="3" min="1" max="50" style="width:120px">
           </div>
           <div class="ctl">
             <label>Ordinamento</label>
@@ -502,7 +510,7 @@ footer b{color:var(--gold-soft)}
               <button data-v="key_desc">Nome Z→A</button>
             </div>
           </div>
-          <button class="runbtn" onclick="runQ4()">▶ Esegui query</button>
+          <button class="runbtn" onclick="runQ4(event)">▶ Esegui query</button>
         </div>
         <div class="qcode">
           <span class="lbl">Query generata · POST /one_piece/_search</span>
@@ -519,11 +527,16 @@ footer b{color:var(--gold-soft)}
   <div class="wrap reveal">
     <span class="eyebrow">Riepilogo</span>
     <h2 class="big">Cosa abbiamo visto</h2>
-    <div class="grid c2" style="margin-top:22px">
-      <div class="card"><h3>🔎 Full-text vs esatto</h3><p>I campi <code>text</code> si cercano con <code>match</code>/<code>multi_match</code> (analizzati, con rilevanza e boost); i campi <code>keyword</code> con <code>term</code> (valore esatto).</p></div>
-      <div class="card"><h3>🎯 Filtri e range</h3><p><code>term</code> per le categorie (ciurma), <code>range</code> per i numeri (taglia): la base di ogni interrogazione mirata.</p></div>
-      <div class="card"><h3>📊 Aggregazioni</h3><p>Con <code>terms</code> + <code>avg</code> otteniamo statistiche (taglia media per ciurma) senza estrarre i documenti.</p></div>
-      <div class="card"><h3>⚡ REST + JSON</h3><p>Ogni query è una chiamata HTTP con corpo JSON: la stessa che questa pagina invia in tempo reale a <code>localhost:9200</code>.</p></div>
+    <div class="grid c1" style="margin-top:22px">
+      <div class="card"><h3>🔎 Full-text vs corrispondenza esatta</h3><p>Abbiamo analizzato la differenza cruciale tra le tipologie di dato testuale. I campi mappati come <code>text</code>
+         attraversano un processo di analisi e vengono interrogati tramite query come <code>match</code> o <code>multi_match</code>, permettendo ricerche flessibili basate sulla rilevanza (scoring) e sull'applicazione di boost (per dare maggiore peso a specifici campi). 
+         Al contrario, i campi <code>keyword</code> vengono archiviati così come sono e si interrogano tramite la query <code>term</code> , garantendo una corrispondenza esatta, essenziale per tag, stati o identificatori.</p></div>
+      <div class="card"><h3>🎯 Filtri e range</h3><p>Abbiamo visto come costruire interrogazioni estremamente mirate. Utilizzando filtri esatti come <code>term</code>
+         , possiamo isolare specifiche categorie. Con la query <code>range</code>, invece, possiamo filtrare in base a valori continui, come l'intervallo numerico di una "taglia" o un arco temporale. 
+         Questi strumenti rappresentano l'ossatura fondamentale per restringere in modo efficiente il bacino dei risultati.</p></div>
+      <div class="card"><h3>📊 Aggregazioni</h3><p>Abbiamo sfruttato il motore analitico di Elasticsearch per generare insight complessi al volo. Combinando aggregazioni di tipo "bucket" 
+        (come <code>terms</code> per raggruppare i personaggi per ciurma) con aggregazioni di tipo "metrica" (come <code>avg</code> per calcolarne la taglia media), abbiamo ottenuto statistiche avanzate. 
+        Il grande vantaggio è che tutti questi calcoli avvengono direttamente lato server, senza dover estrarre o trasferire l'intero set di documenti.</p></div>
     </div>
   </div>
 </section>
@@ -531,7 +544,6 @@ footer b{color:var(--gold-soft)}
 <footer>
   <div class="wrap">
     <div style="font-family:var(--serif);font-size:1.3rem;color:var(--gold-soft)">One Piece × Elasticsearch</div>
-    <div>DB NoSQL documentale · Analisi Dati &amp; Big Data</div>
     <div class="small" style="color:#c9bd9c">Dati interrogati live da Elasticsearch — indice <b>one_piece</b> · ~1548 documenti</div>
   </div>
 </footer>
@@ -545,12 +557,7 @@ const INDEX = "one_piece";
 // tutti i campi interrogabili in full-text (bounty escluso: numerico)
 const Q1_FIELDS = [
   {name:"name",        type:"text",    def:true,  w:3},
-  {name:"description", type:"text",    def:true,  w:1},
-  {name:"crew",        type:"keyword", def:false, w:1},
-  {name:"origin",      type:"keyword", def:false, w:1},
-  {name:"devil_fruit", type:"keyword", def:false, w:1},
-  {name:"role",        type:"keyword", def:false, w:1},
-  {name:"status",      type:"keyword", def:false, w:1},
+  {name:"description", type:"text",    def:true,  w:1}
 ];
 const HIGHLIGHTABLE = ["name","description"]; // text analizzati
 
@@ -627,7 +634,7 @@ async function loadCrews(){
     // default: Straw Hat Pirates se presente
     const shp=[...sel.options].find(o=>o.value==="Straw Hat Pirates");
     if(shp) shp.selected=true;
-    $("#q2-crew-hint").textContent = `${buckets.length} ciurme disponibili (con almeno 1 personaggio).`;
+    $("#q2-crew-hint").textContent = `${buckets.length} ciurme disponibili.`;
     buildQ2();
   }catch(e){
     sel.innerHTML="<option>— errore nel caricamento —</option>";
@@ -693,8 +700,8 @@ function q1Body(){
   return body;
 }
 function buildQ1(){ showJSON("#q1-json",q1Body()); }
-async function runQ1(){
-  const btn=event?.target; if(btn){btn.disabled=true;}
+async function runQ1(ev){
+  const btn=ev&&ev.target; if(btn){btn.disabled=true;}
   const res=$("#q1-res"); res.innerHTML="<div class='empty'>Ricerca in corso…</div>";
   try{
     const d=await esSearch(q1Body());
@@ -716,8 +723,8 @@ function q2Body(){
   };
 }
 function buildQ2(){ showJSON("#q2-json",q2Body()); }
-async function runQ2(){
-  const btn=event?.target; if(btn){btn.disabled=true;}
+async function runQ2(ev){
+  const btn=ev&&ev.target; if(btn){btn.disabled=true;}
   const res=$("#q2-res"); res.innerHTML="<div class='empty'>Ricerca in corso…</div>";
   try{
     const d=await esSearch(q2Body());
@@ -751,8 +758,8 @@ function q3Body(){
   return body;
 }
 function buildQ3(){ showJSON("#q3-json",q3Body()); }
-async function runQ3(){
-  const btn=event?.target; if(btn){btn.disabled=true;}
+async function runQ3(ev){
+  const btn=ev&&ev.target; if(btn){btn.disabled=true;}
   const res=$("#q3-res"); res.innerHTML="<div class='empty'>Ricerca in corso…</div>";
   try{
     const d=await esSearch(q3Body());
@@ -775,20 +782,25 @@ function q4Order(){
 function q4Body(){
   return {
     size:0,
-    // solo i personaggi con una taglia nota: altrimenti le ciurme senza
-    // taglie avrebbero media null e falserebbero l'ordinamento
-    query:{ exists:{ field:"bounty" } },
+    // solo i personaggi con una taglia nota (exists:bounty) ed escludendo
+    // le ciurme "vuote" (crew " " o ""): altrimenti la media sarebbe falsata
+    query:{
+      bool:{
+        filter:[ { exists:{ field:"bounty" } } ],
+        must_not:[ { terms:{ crew:[" ", ""] } } ]
+      }
+    },
     aggs:{
       per_ciurma:{
-        terms:{ field:"crew", size:Number($("#q4-size").value)||12, order:q4Order(), min_doc_count:3 },
-        aggs:{ taglia_media:{ avg:{ field:"bounty" } } }
+        terms:{ field:"crew", size:Number($("#q4-size").value)||12, order:q4Order(), min_doc_count:Number($("#q4-mindoc").value)||1 },
+        aggs:{ taglia_media:{ avg:{ field:"bounty", format:"0.00" } } }
       }
     }
   };
 }
 function buildQ4(){ showJSON("#q4-json",q4Body()); }
-async function runQ4(){
-  const btn=event?.target; if(btn){btn.disabled=true;}
+async function runQ4(ev){
+  const btn=ev&&ev.target; if(btn){btn.disabled=true;}
   const res=$("#q4-res"); res.innerHTML="<div class='empty'>Calcolo in corso…</div>";
   try{
     const d=await esSearch(q4Body());
@@ -863,7 +875,7 @@ buildQ1Fields();
 on($("#q2-crew"),"change",buildQ2);
 on($("#q2-size"),"input",buildQ2);
 ["#q3-min","#q3-max","#q3-size"].forEach(s=>on($(s),"input",buildQ3));
-on($("#q4-size"),"input",buildQ4);
+["#q4-size","#q4-mindoc"].forEach(s=>on($(s),"input",buildQ4));
 // segmented buttons
 document.querySelectorAll(".segmented").forEach(seg=>{
   seg.addEventListener("click",e=>{
@@ -904,6 +916,367 @@ secs.forEach(s=>s&&navIo.observe(s));
 //  AVVIO
 // ============================================================
 checkConnection();
+</script>
+
+<!-- ============================================================ -->
+<!--  MODALITÀ PRESENTAZIONE (relatore) — stile                    -->
+<!-- ============================================================ -->
+<style id="pv-styles">
+#pv-launch{position:fixed;right:18px;bottom:18px;z-index:60;
+  background:var(--gold);color:#2a1c02;font-weight:700;border:none;font-family:var(--sans);
+  padding:12px 18px;border-radius:12px;cursor:pointer;font-size:.95rem;
+  box-shadow:0 8px 22px rgba(217,155,22,.45);display:inline-flex;gap:9px;align-items:center;transition:transform .2s}
+#pv-launch:hover{transform:translateY(-2px)}
+@media print{#pv-launch{display:none}}
+
+#pv-console{position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;font-family:var(--sans);color:var(--ink)}
+#pv-console[hidden]{display:none}
+.pv-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap;
+  background:linear-gradient(120deg,var(--ocean),var(--ocean-2));color:#fdf6e4}
+.pv-title{font-family:var(--serif);font-weight:700;font-size:1.05rem;color:var(--gold-soft);
+  padding:2px 10px;max-width:34ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv-spacer{flex:1}
+.pv-btn{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fdf6e4;
+  border-radius:9px;padding:8px 12px;cursor:pointer;font:inherit;font-size:.85rem;white-space:nowrap}
+.pv-btn:hover{background:rgba(255,255,255,.18)}
+.pv-btn.pv-danger{border-color:rgba(255,255,255,.4);background:var(--red)}
+.pv-body{flex:1;display:grid;grid-template-columns:1.35fr 1fr;min-height:0}
+@media(max-width:900px){.pv-body{grid-template-columns:1fr 1fr}}
+.pv-left{display:flex;flex-direction:column;min-height:0;border-right:2px solid var(--line)}
+.pv-left-head,.pv-notes-head{font-size:.8rem;color:var(--ink-soft);padding:8px 14px;background:var(--paper-2);
+  border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+#pv-frame{flex:1;width:100%;border:none;background:var(--bg)}
+.pv-right{display:flex;flex-direction:column;min-height:0;background:var(--paper)}
+.pv-sections{display:flex;gap:6px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line);
+  max-height:22vh;overflow:auto}
+.pv-sec{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;
+  cursor:pointer;font:inherit;font-size:.82rem;color:var(--ink-soft)}
+.pv-sec:hover{border-color:var(--gold)}
+.pv-sec.on{background:var(--ocean);color:#fdf6e4;border-color:var(--ocean);font-weight:600}
+.pv-notes-head b{color:var(--ocean)}
+.pv-save{font-size:.78rem;color:var(--ok)}
+.pv-save.dirty{color:var(--warn)}
+#pv-notes{flex:1;width:100%;resize:none;border:none;outline:none;padding:16px 18px;
+  font-family:var(--sans);font-size:1.02rem;line-height:1.65;color:var(--ink);background:var(--paper)}
+.pv-notes-foot{display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line);background:var(--paper-2)}
+.pv-notes-foot .pv-btn{background:var(--gold);color:#2a1c02;border-color:transparent;font-weight:700}
+.pv-hint{font-size:.76rem;color:var(--ink-soft)}
+
+#pv-proj-ctrl{position:fixed;z-index:9999;left:50%;bottom:26px;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .4s;font-family:var(--sans)}
+#pv-proj-ctrl.hide{opacity:0;pointer-events:none}
+#pv-proj-fs{background:var(--gold);color:#2a1c02;font-weight:700;border:none;border-radius:12px;
+  padding:12px 20px;cursor:pointer;font-family:var(--sans);font-size:1rem;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.pv-proj-hint{font-size:.82rem;color:var(--ink-soft);background:var(--paper);
+  padding:5px 12px;border-radius:999px;border:1px solid var(--line)}
+</style>
+
+<!-- ============================================================ -->
+<!--  MODALITÀ PRESENTAZIONE (relatore) — logica                   -->
+<!-- ============================================================ -->
+<script>
+(function(){
+  const IS_EMBEDDED = window.self !== window.top;              // true = anteprima nella console
+  const ROLE = /projection/.test(location.hash) ? 'projection' : 'presenter';
+  const BASE_URL = location.href.split('#')[0];
+  // elenco sezioni (id + titolo leggibile) ricavato dalla dot-nav esistente
+  const sections = [...document.querySelectorAll('#nav a')].map(a=>({
+    id:a.getAttribute('href').slice(1),
+    title:a.getAttribute('title')||a.getAttribute('href').slice(1)
+  }));
+
+  // sezione attualmente "in vista" (la più vicina alla parte alta dello schermo)
+  function currentSectionId(){
+    const secs=[...document.querySelectorAll('section[id]')];
+    const mid=window.innerHeight*0.35; let cur=secs[0]?secs[0].id:null;
+    for(const s of secs){ if(s.getBoundingClientRect().top<=mid) cur=s.id; }
+    return cur;
+  }
+
+  // ==========================================================
+  //  RUOLO: PROIEZIONE (finestra sul 2° schermo o anteprima)
+  // ==========================================================
+  if(ROLE==='projection'){
+    // ---- stato dei controlli delle query (sync relatore → proiezione) ----
+    const gEl = id => document.getElementById(id);
+    const getVal = id => { const el=gEl(id); return el?el.value:''; };
+    const setVal = (id,v) => { const el=gEl(id); if(el && v!=null && el.value!==String(v)) el.value=v; };
+    const getChk = id => { const el=gEl(id); return el?el.checked:false; };
+    const setChk = (id,v) => { const el=gEl(id); if(el) el.checked=!!v; };
+    const getSort = id => { const el=document.querySelector('#'+id+' .on'); return el?el.dataset.v:null; };
+    const setSort = (id,v) => { const seg=gEl(id); if(!seg||v==null) return;
+      seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.v===v)); };
+
+    function collectState(){
+      const fields=[...document.querySelectorAll('#q1-fields .fieldrow')].map(row=>{
+        const c=row.querySelector('.chk'), r=row.querySelector('input[type=range]');
+        return { name:c.dataset.f, on:c.checked, w:r?r.value:'1' };
+      });
+      return {
+        q1:{ text:getVal('q1-text'), fuzzy:getChk('q1-fuzzy'), size:getVal('q1-size'), fields },
+        q2:{ crew:getVal('q2-crew'), size:getVal('q2-size'), sort:getSort('q2-sort') },
+        q3:{ min:getVal('q3-min'), max:getVal('q3-max'), size:getVal('q3-size'), sort:getSort('q3-sort') },
+        q4:{ size:getVal('q4-size'), mindoc:getVal('q4-mindoc'), sort:getSort('q4-sort') }
+      };
+    }
+    function applyState(s){
+      if(!s) return;
+      if(s.q1){
+        setVal('q1-text',s.q1.text); setChk('q1-fuzzy',s.q1.fuzzy); setVal('q1-size',s.q1.size);
+        (s.q1.fields||[]).forEach(f=>{
+          const c=[...document.querySelectorAll('#q1-fields .chk')].find(x=>x.dataset.f===f.name);
+          if(!c) return; const row=c.closest('.fieldrow'), r=row.querySelector('input[type=range]'), wn=row.querySelector('.wnum');
+          c.checked=f.on; row.classList.toggle('off',!f.on);
+          if(r){ r.disabled=!f.on; r.value=f.w; } if(wn) wn.textContent='^'+f.w;
+        });
+        if(window.buildQ1) buildQ1();
+      }
+      if(s.q2){ setVal('q2-crew',s.q2.crew); setVal('q2-size',s.q2.size); setSort('q2-sort',s.q2.sort); if(window.buildQ2) buildQ2(); }
+      if(s.q3){ setVal('q3-min',s.q3.min); setVal('q3-max',s.q3.max); setVal('q3-size',s.q3.size); setSort('q3-sort',s.q3.sort); if(window.buildQ3) buildQ3(); }
+      if(s.q4){ setVal('q4-size',s.q4.size); setVal('q4-mindoc',s.q4.mindoc); setSort('q4-sort',s.q4.sort); if(window.buildQ4) buildQ4(); }
+    }
+
+    function tryFullscreen(){
+      const el=document.documentElement;
+      if(document.fullscreenElement) document.exitFullscreen();
+      else if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    }
+    // riceve i comandi di navigazione dalla console del relatore
+    window.addEventListener('message',e=>{
+      const m=e.data; if(!m||!m.op) return;
+      if(m.op==='goto'){ const el=document.getElementById(m.id); if(el) el.scrollIntoView({behavior:'smooth'}); }
+      else if(m.op==='scrollto'){
+        const max=document.documentElement.scrollHeight-window.innerHeight;
+        window.scrollTo({top:(m.ratio||0)*max,behavior:'auto'});
+      }
+      else if(m.op==='fullscreen'){ if(!document.fullscreenElement) tryFullscreen(); }
+      else if(m.op==='q-sync' && !IS_EMBEDDED){
+        // la proiezione reale replica i parametri e, se richiesto, riesegue la query
+        applyState(m.state);
+        if(m.run){ const fn=window['runQ'+String(m.run).slice(1)]; if(typeof fn==='function') fn(); }
+      }
+    });
+
+    if(IS_EMBEDDED){
+      // È l'anteprima dentro la console: comunica lo scroll al genitore
+      let t=null;
+      const report=()=>{
+        const max=document.documentElement.scrollHeight-window.innerHeight;
+        parent.postMessage({op:'preview-scroll', id:currentSectionId(), ratio:max>0?window.scrollY/max:0},'*');
+      };
+      window.addEventListener('scroll',()=>{clearTimeout(t);t=setTimeout(report,90);},{passive:true});
+      window.addEventListener('load',()=>setTimeout(report,300));
+
+      // inoltra le interazioni con i controlli delle query al relatore,
+      // che le rigira alla finestra di proiezione reale
+      let st=null;
+      const reportState=(run)=>{
+        clearTimeout(st);
+        const send=()=>parent.postMessage({op:'q-sync', state:collectState(), run:run||null},'*');
+        if(run) send(); else st=setTimeout(send,120);   // parametri live: piccolo debounce
+      };
+      const inControls = e => e.target && e.target.closest && e.target.closest('.qcontrols');
+      document.addEventListener('input',  e=>{ if(inControls(e)) reportState(null); }, true);
+      document.addEventListener('change', e=>{ if(inControls(e)) reportState(null); }, true);
+      document.addEventListener('click',  e=>{
+        const rb=e.target.closest ? e.target.closest('.runbtn') : null;
+        if(rb){ const sec=rb.closest('section'); reportState(sec?sec.id:null); return; }
+        // segmented / preset: i valori sono impostati via JS, leggo lo stato dopo il tick
+        if(inControls(e)) setTimeout(()=>reportState(null),0);
+      }, true);
+    } else {
+      // È la finestra di proiezione vera e propria (2° schermo)
+      const ctrl=document.createElement('div'); ctrl.id='pv-proj-ctrl';
+      ctrl.innerHTML='<button id="pv-proj-fs">⛶ Avvia schermo intero</button>'+
+        '<div class="pv-proj-hint">Modalità proiezione · premi <b>F</b> per lo schermo intero</div>';
+      document.body.appendChild(ctrl);
+      document.getElementById('pv-proj-fs').addEventListener('click',tryFullscreen);
+      window.addEventListener('keydown',e=>{ if((e.key||'').toLowerCase()==='f') tryFullscreen(); });
+      let ht; const hide=()=>ctrl.classList.add('hide');
+      const wake=()=>{ ctrl.classList.remove('hide'); clearTimeout(ht); ht=setTimeout(hide,3000); };
+      wake(); window.addEventListener('mousemove',wake);
+      document.addEventListener('fullscreenchange',()=>{ wake();
+        const b=document.getElementById('pv-proj-fs'); if(b) b.textContent=document.fullscreenElement?'⛶ Esci da schermo intero':'⛶ Avvia schermo intero'; });
+    }
+    return; // in proiezione non servono launcher/console
+  }
+
+  // ==========================================================
+  //  RUOLO: PRESENTER (schermo principale)
+  // ==========================================================
+  const NOTES_KEY='pv-notes:'+(location.pathname.split('/').pop()||'presentazione');
+  let notes={}; try{ notes=JSON.parse(localStorage.getItem(NOTES_KEY)||'{}')||{}; }catch(e){ notes={}; }
+  let proj=null, notesSec=null, curSec=null, saveT=null, lastState=null;
+
+  // --- pulsante di avvio ---
+  const launch=document.createElement('button');
+  launch.id='pv-launch'; launch.innerHTML='🎦 Modalità presentazione';
+  launch.addEventListener('click',startPresenter);
+  document.body.appendChild(launch);
+
+  // --- console del relatore ---
+  const con=document.createElement('div');
+  con.id='pv-console'; con.hidden=true;
+  con.innerHTML = `
+    <div class="pv-bar">
+      <button class="pv-btn" id="pv-prev" title="Sezione precedente (←)">◀</button>
+      <button class="pv-btn" id="pv-next" title="Sezione successiva (→)">▶</button>
+      <div class="pv-title" id="pv-cur">—</div>
+      <div class="pv-spacer"></div>
+      <button class="pv-btn" id="pv-reopen">Riapri proiezione</button>
+      <button class="pv-btn" id="pv-fs">⛶ Proiezione a schermo intero</button>
+      <button class="pv-btn" id="pv-export">Esporta note</button>
+      <button class="pv-btn" id="pv-import">Importa note</button>
+      <button class="pv-btn pv-danger" id="pv-exit">Esci</button>
+    </div>
+    <div class="pv-body">
+      <div class="pv-left">
+        <div class="pv-left-head"><span>🖥️ Anteprima proiezione — scorri qui per guidare il 2° schermo</span></div>
+        <iframe id="pv-frame" title="Anteprima proiezione"></iframe>
+      </div>
+      <div class="pv-right">
+        <div class="pv-sections" id="pv-sections"></div>
+        <div class="pv-notes-head">
+          <span>📝 Note del relatore · <b id="pv-notes-sec">—</b></span>
+          <span class="pv-save" id="pv-save">Salvato ✓</span>
+        </div>
+        <textarea id="pv-notes" placeholder="Scrivi qui le note per questa sezione… (salvataggio automatico)"></textarea>
+        <div class="pv-notes-foot">
+          <button class="pv-btn" id="pv-save-btn">💾 Salva</button>
+          <span class="pv-hint">Salvataggio automatico attivo · una nota per sezione · usa “Esporta” per un backup su file</span>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="pv-file" accept="application/json" hidden>`;
+  document.body.appendChild(con);
+
+  const q = id => con.querySelector('#'+id);
+  const frame=q('pv-frame'), ta=q('pv-notes'), saveLbl=q('pv-save'), secBox=q('pv-sections');
+
+  // lista sezioni cliccabili
+  sections.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='pv-sec'; b.dataset.id=s.id; b.textContent=s.title;
+    b.addEventListener('click',()=>gotoSection(s.id));
+    secBox.appendChild(b);
+  });
+
+  function startPresenter(){
+    frame.src = BASE_URL+'#projection';
+    con.hidden=false;
+    openProjection();
+    setCurrent(sections[0]?sections[0].id:null);
+  }
+
+  async function openProjection(){
+    if(proj && !proj.closed){ proj.focus(); return; }
+    proj=window.open(BASE_URL+'#projection','pv-projection','width=1024,height=720');
+    if(!proj){ alert('Il popup è stato bloccato dal browser. Consenti i popup per aprire la proiezione sul secondo schermo.'); return; }
+    // se supportato (Chrome/Edge, contesto sicuro): sposta la finestra sul 2° schermo a tutto schermo
+    try{
+      if('getScreenDetails' in window){
+        const sd=await window.getScreenDetails();
+        const ext=sd.screens.find(s=>s!==sd.currentScreen)||sd.currentScreen;
+        if(ext){ proj.moveTo(ext.availLeft,ext.availTop); proj.resizeTo(ext.availWidth,ext.availHeight); }
+      }
+    }catch(e){/* permesso negato o non supportato: sposta la finestra a mano sul 2° schermo */}
+    // se la proiezione viene riaperta a metà presentazione, risincronizza i controlli
+    if(lastState) setTimeout(()=>{ if(proj && !proj.closed) proj.postMessage({op:'q-sync',state:lastState},'*'); }, 1600);
+  }
+
+  function gotoSection(id){
+    if(frame.contentWindow) frame.contentWindow.postMessage({op:'goto',id},'*');
+    if(proj && !proj.closed) proj.postMessage({op:'goto',id},'*');
+    setCurrent(id);
+  }
+  function neighbor(delta){
+    const i=sections.findIndex(s=>s.id===curSec);
+    const j=Math.min(sections.length-1,Math.max(0,(i<0?0:i)+delta));
+    if(sections[j]) gotoSection(sections[j].id);
+  }
+
+  function setCurrent(id){
+    if(!id) return;
+    curSec=id;
+    const meta=sections.find(s=>s.id===id);
+    q('pv-cur').textContent=meta?meta.title:id;
+    q('pv-notes-sec').textContent=meta?meta.title:id;
+    secBox.querySelectorAll('.pv-sec').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+    if(id!==notesSec){ persist(); notesSec=id; ta.value=notes[id]||''; }
+  }
+
+  // --- salvataggio note (per sezione) ---
+  function flushNotes(){ if(notesSec!=null) notes[notesSec]=ta.value; }
+  function persist(){
+    flushNotes();
+    try{ localStorage.setItem(NOTES_KEY,JSON.stringify(notes)); saveLbl.textContent='Salvato ✓'; saveLbl.classList.remove('dirty'); }
+    catch(e){ saveLbl.textContent='Errore di salvataggio'; saveLbl.classList.add('dirty'); }
+  }
+  ta.addEventListener('input',()=>{
+    if(notesSec!=null) notes[notesSec]=ta.value;
+    saveLbl.textContent='Modifiche non salvate…'; saveLbl.classList.add('dirty');
+    clearTimeout(saveT); saveT=setTimeout(persist,500);
+  });
+  q('pv-save-btn').addEventListener('click',persist);
+
+  // --- esporta / importa note su file ---
+  q('pv-export').addEventListener('click',()=>{
+    flushNotes();
+    const blob=new Blob([JSON.stringify(notes,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='note-relatore-'+(location.pathname.split('/').pop()||'presentazione')+'.json';
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+  const fileInput=q('pv-file');
+  q('pv-import').addEventListener('click',()=>fileInput.click());
+  fileInput.addEventListener('change',()=>{
+    const f=fileInput.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ try{ const obj=JSON.parse(rd.result);
+      if(obj&&typeof obj==='object'){ Object.assign(notes,obj); notesSec=null; setCurrent(curSec); persist(); alert('Note importate correttamente.'); }
+    }catch(e){ alert('File non valido: deve essere un .json esportato da qui.'); } fileInput.value=''; };
+    rd.readAsText(f);
+  });
+
+  // --- barra dei controlli ---
+  q('pv-prev').addEventListener('click',()=>neighbor(-1));
+  q('pv-next').addEventListener('click',()=>neighbor(1));
+  q('pv-reopen').addEventListener('click',openProjection);
+  q('pv-fs').addEventListener('click',()=>{ if(proj&&!proj.closed){ proj.focus(); proj.postMessage({op:'fullscreen'},'*'); } });
+  q('pv-exit').addEventListener('click',exitPresenter);
+
+  function exitPresenter(){
+    persist();
+    con.hidden=true;
+    frame.src='about:blank';
+    if(proj && !proj.closed) proj.close();
+    proj=null;
+  }
+
+  // frecce da tastiera per cambiare sezione (se non stai scrivendo le note)
+  window.addEventListener('keydown',e=>{
+    if(con.hidden || document.activeElement===ta) return;
+    if(e.key==='ArrowRight'){ e.preventDefault(); neighbor(1); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); neighbor(-1); }
+  });
+
+  // messaggi dall'anteprima → aggiorna la sezione corrente e specchia sulla proiezione
+  window.addEventListener('message',e=>{
+    const m=e.data; if(!m||!m.op) return;
+    if(m.op==='preview-scroll'){
+      if(proj && !proj.closed) proj.postMessage({op:'scrollto',ratio:m.ratio},'*');
+      if(m.id) setCurrent(m.id);
+    } else if(m.op==='q-sync'){
+      // interazione del relatore nell'anteprima → rispecchiala sulla proiezione
+      lastState=m.state||lastState;
+      if(proj && !proj.closed) proj.postMessage(m,'*');
+    }
+  });
+
+  // salva prima di chiudere/ricaricare la pagina
+  window.addEventListener('beforeunload',()=>{ persist(); if(proj&&!proj.closed) proj.close(); });
+})();
 </script>
 </body>
 </html>
