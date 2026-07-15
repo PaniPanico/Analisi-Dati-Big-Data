@@ -519,6 +519,7 @@
     </div>
     <div class="qbody">
       <pre class="sql"><span class="kw">SELECT</span> m.codice_cliente, cl.nome, cl.cognome,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> mesi,
        <span class="fn">ROUND</span>(<span class="fn">AVG</span>(m.totale_mese), 2) <span class="kw">AS</span> spesa_media_mensile
 <span class="kw">FROM</span> (
     <span class="kw">SELECT</span> o.codice_cliente,
@@ -604,7 +605,7 @@
 <span class="kw">FROM</span> clienti c
 <span class="kw">JOIN</span> ordini o       <span class="kw">ON</span> c.codice_cliente = o.codice_cliente
 <span class="kw">JOIN</span> righe_ordine r <span class="kw">ON</span> o.codice_ordine  = r.codice_ordine
-<span class="kw">GROUP BY</span> c.codice_cliente
+<span class="kw">GROUP BY</span> c.codice_cliente, c.nome, c.cognome
 <span class="kw">ORDER BY</span> giorni_inattivo <span class="st" id="q5-dir">DESC</span>, valore_cliente DESC;</pre>
       <div class="result">
         <div class="rhead"><span>Risultato</span><span class="cnt" id="q5-cnt"></span></div>
